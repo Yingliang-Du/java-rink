@@ -1,0 +1,9 @@
+/Users/yingliangdu/ProjectEnterprise/JavaRink/Validation/src/main/java/com/ylw/enterprise/validation/bean/AbstractValidationBean.java
+/Users/yingliangdu/ProjectEnterprise/JavaRink/Validation/src/main/java/com/ylw/enterprise/validation/error/FieldErrorCode.java
+/Users/yingliangdu/ProjectEnterprise/JavaRink/Validation/src/main/java/com/ylw/enterprise/validation/binder/AbstractBeanBinder.java
+/Users/yingliangdu/ProjectEnterprise/JavaRink/Validation/src/main/java/com/ylw/enterprise/validation/error/BaseValidationError.java
+/Users/yingliangdu/ProjectEnterprise/JavaRink/Validation/src/main/java/com/ylw/enterprise/validation/validator/ValidationRule.java
+/Users/yingliangdu/ProjectEnterprise/JavaRink/Validation/src/main/java/com/ylw/enterprise/validation/bean/AbstractPojomaticBean.java
+/Users/yingliangdu/ProjectEnterprise/JavaRink/Validation/src/main/java/com/ylw/enterprise/validation/validator/FieldValidator.java
+/Users/yingliangdu/ProjectEnterprise/JavaRink/Validation/src/main/java/com/ylw/enterprise/validation/example/MyBean.java
+/Users/yingliangdu/ProjectEnterprise/JavaRink/Validation/src/main/java/com/ylw/enterprise/validation/binder/FieldBinder.java
