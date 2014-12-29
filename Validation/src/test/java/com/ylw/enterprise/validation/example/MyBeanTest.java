@@ -27,7 +27,8 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.ylw.enterprise.validation.error.BaseValidationError;
+import com.ylw.enterprise.validation.error.AbstractError;
+import com.ylw.enterprise.validation.error.FieldError;
 
 /**
  * Unit test for MyBean example.
@@ -36,7 +37,7 @@ public class MyBeanTest {
 	private static final Logger LOGGER = Logger.getLogger(MyBeanTest.class);
 
 	MyBean myBean;
-	Set<BaseValidationError> errors;
+	Set<? extends AbstractError> errors;
 
 	@Before
 	public void initInstance() {

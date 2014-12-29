@@ -17,9 +17,13 @@
  */
 package com.ylw.enterprise.validation.binder;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
+import com.ylw.enterprise.validation.error.FieldError;
 
 /**
  * This class need to be override to add customized binding logic
@@ -31,9 +35,74 @@ public abstract class AbstractBeanBinder {
 	 * @param bean
 	 * @param parameterObject
 	 */
-	public abstract void bindToBean(@Nonnull AbstractValidationBean bean, @Nonnull Object parameterObject);
+//	public abstract void bindToBean(@Nonnull AbstractValidationBean bean, @Nonnull Object parameterObject);
+//	
+//	protected void bindToField(AbstractValidationBean bean, String fieldName, String stringValue) {
+//		FieldBinder.bindToField(bean, fieldName, stringValue);
+//	}
 	
-	protected void bindToField(AbstractValidationBean bean, String fieldName, String stringValue) {
-		FieldBinder.bindToField(bean, fieldName, stringValue);
+	/**
+	 * Bind this bean from HTTP request form parameters
+	 * @param parameterMap - parameter map from web request
+	 * @return this instance
+	 */
+	private AbstractValidationBean bind(AbstractValidationBean bean, @Nonnull Map<String, String[]> parameterMap) {
+		FieldError error;
+		// get all fields of this bean
+		Field[] fields = bean.getClass().getDeclaredFields();
+		// bind parameter to each matching field
+		for (int i=0; i<fields.length; i++) {
+			Field field = fields[i];
+			String[] stringValues = parameterMap.get(field.getName());
+			if (stringValues != null) {
+				// found a match - bind to the field
+				error = FieldBinder.bindToField(bean, field, stringValues);
+				// add error
+				if (error != null) {
+					bean.addError(error);
+				}
+			}
+		}
+		
+		// return this bean
+		return bean;
 	}
+	
+	/**
+	 * Call from bean to bind all fields
+	 * @param bean
+	 * @return populated bean
+	 */
+	public AbstractValidationBean bind() {
+	
+		// Pre bind process - get bean instance populated with default value
+		AbstractValidationBean bindBean = preBind();
+		// Build request parameters map
+		Map<String, String[]> parameterMap = buildParameterMap();
+		// Bind fields
+		bindBean = bind(bindBean, parameterMap);
+		// Return the binded bean after post bind process
+		return postBind(bindBean);
+		
+	}
+	
+	/**
+	 * Override this method to put pre bind logic like populate bean with 
+	 * default values from data source... 
+	 * @return Pre populated bean
+	 */
+	protected abstract AbstractValidationBean preBind();
+	
+	/**
+	 * Override this method to build parameter map, or get it from HTTP request
+	 * @return parameter map
+	 */
+	protected abstract Map<String, String[]> buildParameterMap();
+	
+	/**
+	 * Override this method to put customized post bind process logic
+	 * @param bean need to be processed
+	 * @return binded bean
+	 */
+	protected abstract AbstractValidationBean postBind(AbstractValidationBean bean);
 }

@@ -20,11 +20,14 @@ package com.ylw.enterprise.validation.example;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.pojomatic.annotations.AutoProperty;
 
+import com.ylw.enterprise.validation.bean.AbstractPojomaticBean;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
-import com.ylw.enterprise.validation.error.BaseValidationError;
+import com.ylw.enterprise.validation.error.FieldError;
 
-public class MyBean extends AbstractValidationBean {
+@AutoProperty
+public class MyBean extends AbstractPojomaticBean {
 	private static final Logger LOGGER = Logger.getLogger(MyBean.class);
 
 	private String stringField;
@@ -68,12 +71,12 @@ public class MyBean extends AbstractValidationBean {
 		this.integerField = integerField;
 	}
 
-	public String getCardNumber() {
+	public String getCreditCardNumber() {
 		return creditCardNumber;
 	}
 
-	public void setCardNumber(String cardNumber) {
-		this.creditCardNumber = cardNumber;
+	public void setCreditCardNumber(String creditCardNumber) {
+		this.creditCardNumber = creditCardNumber;
 	}
 
 	public String getEmail() {
@@ -90,6 +93,58 @@ public class MyBean extends AbstractValidationBean {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	/** ------------------Builder--------------------- */
+	public static class Builder {
+		private MyBean myBean;
+		
+		public Builder() {
+			this.myBean = new MyBean();
+		}
+		
+		public static Builder defaultValues() {
+			return new Builder();
+		}
+		
+		public MyBean build() {
+			return myBean;
+		}
+		
+		public Builder withStringField(String stringField) {
+			myBean.setStringField(stringField);
+			return this;
+		}
+		
+		public Builder withIntField(int intField) {
+			myBean.setIntField(intField);
+			return this;
+		}
+		
+		public Builder withIntegerField(Integer integerField) {
+			myBean.setIntegerField(integerField);
+			return this;
+		}
+		
+		public Builder withCreditCard(String creditCardNumber) {
+			myBean.setCreditCardNumber(creditCardNumber);
+			return this;
+		}
+		
+		public Builder withEmail(String email) {
+			myBean.setEmail(email);
+			return this;
+		}
+		
+		public Builder withUrl(String url) {
+			myBean.setUrl(url);
+			return this;
+		}
+		
+		public Builder withErrorMessage(String errorMessage) {
+			myBean.setErrorMessage(errorMessage);
+			return this;
+		}
 	}
 
 	/** ------------------Validation-------------------- */

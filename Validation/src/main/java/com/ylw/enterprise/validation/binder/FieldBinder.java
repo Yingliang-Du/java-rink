@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import org.apache.log4j.Logger;
 
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
-import com.ylw.enterprise.validation.error.BaseValidationError;
+import com.ylw.enterprise.validation.error.FieldError;
 import com.ylw.enterprise.validation.error.FieldErrorCode;
 
 public class FieldBinder {
@@ -39,7 +39,7 @@ public class FieldBinder {
 	 */
 	public void bindToBean(@Nonnull AbstractValidationBean bean, @Nonnull Map<String, String[]> parameterMap) {
 		// bind when field name match the map key, record error if not succeed
-		BaseValidationError error;
+		FieldError error;
 		Field[] fields = bean.getClass().getFields();
 		for (Field field : fields) {
 			String[] stringValues = parameterMap.get(field.getName());
@@ -54,8 +54,8 @@ public class FieldBinder {
 		}
 	}
 	
-	static BaseValidationError buildFieldError(String fieldName, String message) {
-		return new BaseValidationError(fieldName, FieldErrorCode.RUNTIME, message);
+	static FieldError buildFieldError(String fieldName, String message) {
+		return new FieldError(fieldName, FieldErrorCode.RUNTIME, message);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class FieldBinder {
 	 * @param stringValues
 	 * @return error if not succeed
 	 */
-	public static BaseValidationError bindToField(AbstractValidationBean bean, Field field, String[] stringValues) {
+	public static FieldError bindToField(AbstractValidationBean bean, Field field, String[] stringValues) {
 		String message;
 		String fieldName = field.getName();
 
@@ -94,8 +94,8 @@ public class FieldBinder {
 		}
 	}
 
-	static BaseValidationError bindToField(AbstractValidationBean bean, Field field, String stringValue) {
-		BaseValidationError error = null;
+	static FieldError bindToField(AbstractValidationBean bean, Field field, String stringValue) {
+		FieldError error = null;
 		String message;
 		// get field name
 		String fieldName = field.getName();
@@ -120,26 +120,26 @@ public class FieldBinder {
 		}
 		catch (IllegalArgumentException | IllegalAccessException e) {
 			// build error
-			error = new BaseValidationError(fieldName, FieldErrorCode.EXCEPTION, e.getMessage());
+			error = new FieldError(fieldName, FieldErrorCode.EXCEPTION, e.getMessage());
 			// log the exception
 			e.printStackTrace();
 		}
 
 		// build and return error - field type had no been dealt with
 		message = "Field type - " + fieldType + " need to be dealt with.";
-		error = new BaseValidationError(fieldName, FieldErrorCode.RUNTIME, message);
+		error = new FieldError(fieldName, FieldErrorCode.RUNTIME, message);
 		return error;
 	}
 
-	private static BaseValidationError bindString(AbstractValidationBean bean, Field field, String stringValue)
+	private static FieldError bindString(AbstractValidationBean bean, Field field, String stringValue)
 			throws IllegalArgumentException, IllegalAccessException {
 		field.set(bean, stringValue);
 		return null;
 	}
 
-	private static BaseValidationError bindPrimitiveInt(AbstractValidationBean bean, Field field, String stringValue)
+	private static FieldError bindPrimitiveInt(AbstractValidationBean bean, Field field, String stringValue)
 			throws IllegalArgumentException, IllegalAccessException {
-		BaseValidationError error = null;
+		FieldError error = null;
 		String fieldName = field.getName();
 
 		try {
@@ -147,15 +147,15 @@ public class FieldBinder {
 		}
 		catch (NumberFormatException e) {
 			e.printStackTrace();
-			error = new BaseValidationError(fieldName, FieldErrorCode.NON_INTEGER);
+			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER);
 		}
 
 		return error;
 	}
 
-	private static BaseValidationError bindInteger(AbstractValidationBean bean, Field field, String stringValue)
+	private static FieldError bindInteger(AbstractValidationBean bean, Field field, String stringValue)
 			throws IllegalArgumentException, IllegalAccessException {
-		BaseValidationError error = null;
+		FieldError error = null;
 		String fieldName = field.getName();
 
 		try {
@@ -163,15 +163,15 @@ public class FieldBinder {
 		}
 		catch (NumberFormatException e) {
 			e.printStackTrace();
-			error = new BaseValidationError(fieldName, FieldErrorCode.NON_INTEGER);
+			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER);
 		}
 
 		return error;
 	}
 
-	private static BaseValidationError bindPrimitiveFloat(AbstractValidationBean bean, Field field, String stringValue)
+	private static FieldError bindPrimitiveFloat(AbstractValidationBean bean, Field field, String stringValue)
 			throws IllegalArgumentException, IllegalAccessException {
-		BaseValidationError error = null;
+		FieldError error = null;
 		String fieldName = field.getName();
 
 		try {
@@ -179,7 +179,7 @@ public class FieldBinder {
 		}
 		catch (NumberFormatException e) {
 			e.printStackTrace();
-			error = new BaseValidationError(fieldName, FieldErrorCode.NON_INTEGER);
+			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER);
 		}
 
 		return error;

@@ -27,8 +27,10 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.ylw.enterprise.validation.binder.AbstractBeanBinder;
 import com.ylw.enterprise.validation.binder.FieldBinder;
-import com.ylw.enterprise.validation.error.BaseValidationError;
+import com.ylw.enterprise.validation.error.AbstractError;
+import com.ylw.enterprise.validation.error.FieldError;
 import com.ylw.enterprise.validation.error.FieldErrorCode;
 import com.ylw.enterprise.validation.validator.FieldValidator;
 import com.ylw.enterprise.validation.validator.ValidationRule;
@@ -38,15 +40,15 @@ public abstract class AbstractValidationBean {
 
 	// -------------------Validation---------------------
 	// A set of error messages
-	protected final Set<BaseValidationError> errors = Sets.newHashSet();
-	private final Map<String, Set<BaseValidationError>> fieldErrorMap = Maps.newTreeMap();
+	protected final Set<AbstractError> errors = Sets.newHashSet();
+	private final Map<String, Set<FieldError>> fieldErrorMap = Maps.newTreeMap();
 
 	/* Deal with errors */
-	public Set<BaseValidationError> getErrors() {
+	public Set<AbstractError> getErrors() {
 		return errors;
 	}
 	
-	public void addError(BaseValidationError error) {
+	public void addError(AbstractError error) {
 		errors.add(error);
 	}
 	
@@ -69,7 +71,7 @@ public abstract class AbstractValidationBean {
 	}
 		
 	/* Deal with field errors */
-	public Map<String, Set<BaseValidationError>> getFieldErrorMap() {
+	public Map<String, Set<FieldError>> getFieldErrorMap() {
 		return fieldErrorMap;
 	}
 		
@@ -104,11 +106,11 @@ public abstract class AbstractValidationBean {
 		}
 
 		// Build error and add to the set
-		BaseValidationError error = new BaseValidationError(fieldName, fieldErrorCode);
+		FieldError error = new FieldError(fieldName, fieldErrorCode);
 		// add to the object error set
 		errors.add(error);
 		// add to the field error map
-		Set<BaseValidationError> fieldErrors = fieldErrorMap.get(fieldName);
+		Set<FieldError> fieldErrors = fieldErrorMap.get(fieldName);
 		if (fieldErrors == null) {
 			fieldErrors = Sets.newHashSet();
 		}
@@ -117,12 +119,12 @@ public abstract class AbstractValidationBean {
 	}
 	
 	/**
-	 * Bind this bean from form parameters
+	 * Bind this bean from HTTP request form parameters
 	 * @param parameterMap - parameter map from web request
 	 * @return this instance
 	 */
 	public AbstractValidationBean bind(@Nonnull Map<String, String[]> parameterMap) {
-		BaseValidationError error;
+		FieldError error;
 		// get all fields of this bean
 		Field[] fields = this.getClass().getDeclaredFields();
 		// bind parameter to each matching field
@@ -141,6 +143,11 @@ public abstract class AbstractValidationBean {
 		
 		// return this bean
 		return this;
+	}
+	
+	public AbstractValidationBean bind(@Nonnull AbstractBeanBinder binder) {
+		// return the binded bean
+		return binder.bind();
 	}
 
 }

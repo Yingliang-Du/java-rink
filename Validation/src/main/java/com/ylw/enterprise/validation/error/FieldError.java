@@ -18,7 +18,7 @@
 package com.ylw.enterprise.validation.error;
 
 import javax.annotation.Nonnull;
-import org.pojomatic.Pojomatic;
+
 import org.pojomatic.annotations.AutoProperty;
 
 /**
@@ -28,24 +28,22 @@ import org.pojomatic.annotations.AutoProperty;
  *
  */
 @AutoProperty
-public class BaseValidationError {
+public class FieldError extends AbstractError {
 	//	private FieldErrorCode code;
 	private String fieldName;
-	protected String message;
 	
-	// Default constructor for sub class
-	protected BaseValidationError() {}
-
-	public BaseValidationError(@Nonnull String fieldName, @Nonnull FieldErrorCode code) {
+// ---------------Constructors--------------
+	public FieldError(@Nonnull String fieldName, @Nonnull FieldErrorCode code) {
 		this.fieldName = fieldName;
 		this.message = buildMessage(fieldName, code);
 	}
 	
-	public BaseValidationError(@Nonnull String fieldName, @Nonnull FieldErrorCode code, @Nonnull String message) {
+	public FieldError(@Nonnull String fieldName, @Nonnull FieldErrorCode code, @Nonnull String message) {
 		this.fieldName = fieldName;
 		this.message = buildMessage(fieldName, code, message);
 	}
 
+// ---------------Getting/Setting methods--------------
 //	public FieldErrorCode getCode() {
 //		return code;
 //	}
@@ -54,10 +52,7 @@ public class BaseValidationError {
 		return fieldName;
 	}
 
-	public String getMessage() {
-		return message;
-	}
-
+// -------------------Utility methods-----------------------
 	private String buildMessage(String fieldName, FieldErrorCode code) {
 		// Build message
 		StringBuilder builder = new StringBuilder().append("The ").append(fieldName).append(" ")
@@ -74,21 +69,5 @@ public class BaseValidationError {
 
 		// Return message string
 		return builder.toString();
-	}
-
-	// ---------------Override equals, toString and hashCode--------------
-	@Override
-	public boolean equals(Object other) {
-		return Pojomatic.equals(this, other);
-	}
-
-	@Override
-	public String toString() {
-		return Pojomatic.toString(this);
-	}
-
-	@Override
-	public int hashCode() {
-		return Pojomatic.hashCode(this);
 	}
 }
