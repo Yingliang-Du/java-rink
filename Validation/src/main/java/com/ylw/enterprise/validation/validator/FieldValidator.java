@@ -17,6 +17,8 @@
  */
 package com.ylw.enterprise.validation.validator;
 
+import java.util.Date;
+
 import javax.annotation.Nonnull;
 
 import org.apache.log4j.Logger;
@@ -26,24 +28,24 @@ import com.ylw.enterprise.validation.error.FieldErrorCode;
 
 public class FieldValidator {
 	private final static Logger LOGGER = Logger.getLogger(FieldValidator.class);
-	
+
 	private ValidationRule validationRule;
-	
+
 	public FieldValidator(@Nonnull ValidationRule validationRule) {
 		this.validationRule = validationRule;
 	}
-	
+
 	/**
 	 * validate field validation rule
 	 * @return violation rule indicate rule violated; null if there no rule violated
 	 */
 //	public ViolationRule validate(Object fieldValue) {
-//				
+//
 //		// Check if the field is required and deal with NonNull rule
 //		if (validationRule.isNonNull() && fieldValue == null) {
 //			return ViolationRule.NONNULL;
 //		}
-//		
+//
 //		// Deal with NonBlank rule for string type field
 //		if (fieldValue != null && validationRule.isNonBlank()) {
 //			try {
@@ -57,7 +59,7 @@ public class FieldValidator {
 //				e.printStackTrace();
 //			}
 //		}
-//		
+//
 //		// Deal with PositiveNumber rule
 //		if (fieldValue != null && validationRule.isPositiveNumber()) {
 //			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
@@ -68,21 +70,21 @@ public class FieldValidator {
 //				}
 //			}
 //			else {
-//				LOGGER.error("The field is not an instance of Number, so PositiveNumber rule can not apply.");	
+//				LOGGER.error("The field is not an instance of Number, so PositiveNumber rule can not apply.");
 //			}
 //		}
-//		
+//
 //		// Return null if there is no rule violated
 //		return null;
 //	}
-	
+
 	public FieldErrorCode validate(Object fieldValue) {
-		
+
 		// Check if the field is required and deal with NonNull rule
 		if (validationRule.isNonNull() && fieldValue == null) {
 			return FieldErrorCode.FIELD_NON_NULL;
 		}
-		
+
 		// Deal with NonBlank rule for string type field
 		if (fieldValue != null && validationRule.isNonBlank()) {
 			try {
@@ -96,7 +98,7 @@ public class FieldValidator {
 				e.printStackTrace();
 			}
 		}
-		
+
 		// Deal with PositiveNumber rule
 		if (fieldValue != null && validationRule.isPositiveNumber()) {
 			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
@@ -107,11 +109,40 @@ public class FieldValidator {
 				}
 			}
 			else {
-				LOGGER.error("The field is not an instance of Number, so PositiveNumber rule can not apply.");	
+				LOGGER.error("The field is not an instance of Number, so PositiveNumber rule can not apply.");
 			}
 		}
-		
+
+		// Deal with min (minimum) rule
+		Object minValue = validationRule.getMin();
+		if (fieldValue != null && minValue != null) {
+			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
+			return validateMin(fieldValue, minValue);
+		}
+
 		// Return null if there is no rule violated
+		return null;
+	}
+
+	private FieldErrorCode validateMin(Object fieldValue, Object minValue) {
+		// Validate Date field
+		if (fieldValue instanceof Date) {
+			Date dateValue = (Date) fieldValue;
+			Date dateMinValue;
+			if (minValue instanceof Date) {
+				dateMinValue = (Date) minValue;
+			}
+			else {
+				LOGGER.error("The min rule specified -" + minValue + "- does not apply to Date field");
+				return null;
+			}
+			// report rule violation
+			if (dateMinValue.after(dateValue)) {
+				return FieldErrorCode.FIELD_MIN;
+			}
+		}
+
+		LOGGER.warn("The validation logic for field type -" + fieldValue.getClass().getName() + "- had not been implemented yet");
 		return null;
 	}
 }

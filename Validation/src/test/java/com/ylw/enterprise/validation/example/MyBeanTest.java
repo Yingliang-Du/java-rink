@@ -19,6 +19,8 @@ package com.ylw.enterprise.validation.example;
 
 import static org.junit.Assert.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -84,6 +86,29 @@ public class MyBeanTest {
 		errors = myBean.getFieldErrorMap().get("intField");
 		LOGGER.info("intField errors -> " + errors);
 		assertNull("The intField error should be null", errors);
+	}
+
+	@Test
+	public void testValidateDate() throws ParseException {
+		// Initial state of the bean
+		myBean.setStringField("Tested");
+		myBean.setIntField(7);
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertFalse("There should be no error to start with", myBean.hasError());
+
+		// Validate non-valid Date
+		SimpleDateFormat sdf = new SimpleDateFormat(myBean.getDateFormat());
+		myBean.setDate(sdf.parse("10/30/2014"));
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertTrue("There should be error due to min date violation", myBean.hasError());
+
+		// Validate valid Date
+		myBean.setDate(sdf.parse("10/30/2028"));
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertFalse("There should be no error whothout min date violation", myBean.hasError());
 	}
 
 	@Test

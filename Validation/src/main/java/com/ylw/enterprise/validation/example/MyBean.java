@@ -65,7 +65,7 @@ public class MyBean extends AbstractPojomaticBean {
 	public void setIntField(int intField) {
 		this.intField = intField;
 	}
-	
+
 	public Integer getIntegerField() {
 		return integerField;
 	}
@@ -77,7 +77,7 @@ public class MyBean extends AbstractPojomaticBean {
 	public Date getDate() {
 		return date;
 	}
-	
+
 	public String getDateAsText() {
 		SimpleDateFormat format = new SimpleDateFormat(dateFormat);
 		return format.format(date);
@@ -110,53 +110,53 @@ public class MyBean extends AbstractPojomaticBean {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
+
 	/** ------------------Builder--------------------- */
 	public static class Builder {
 		private MyBean myBean;
-		
+
 		public Builder() {
 			this.myBean = new MyBean();
 		}
-		
+
 		public static Builder defaultValues() {
 			return new Builder();
 		}
-		
+
 		public MyBean build() {
 			return myBean;
 		}
-		
+
 		public Builder withStringField(String stringField) {
 			myBean.setStringField(stringField);
 			return this;
 		}
-		
+
 		public Builder withIntField(int intField) {
 			myBean.setIntField(intField);
 			return this;
 		}
-		
+
 		public Builder withIntegerField(Integer integerField) {
 			myBean.setIntegerField(integerField);
 			return this;
 		}
-		
+
 		public Builder withCreditCard(String creditCardNumber) {
 			myBean.setCreditCardNumber(creditCardNumber);
 			return this;
 		}
-		
+
 		public Builder withEmail(String email) {
 			myBean.setEmail(email);
 			return this;
 		}
-		
+
 		public Builder withUrl(String url) {
 			myBean.setUrl(url);
 			return this;
 		}
-		
+
 		public Builder withErrorMessage(String errorMessage) {
 			myBean.setErrorMessage(errorMessage);
 			return this;
@@ -166,14 +166,15 @@ public class MyBean extends AbstractPojomaticBean {
 	/** ------------------Validation-------------------- */
 
 	/**
-	 * Validate on fields need to be validated 
+	 * Validate on fields need to be validated
 	 */
 	@Override
-	public void validate() {		
+	public void validate() {
 		// Specify validation rule and validate each field that need to be validated
 		validate("stringField", stringField, onRule().withNonNull(true).withNonBlank(true).build());
 		validate("intField", intField, onRule().withPositiveNumber(true).build());
-		validate("email", email, onRule().withEmail(true).build());	
+		validate("date", date, onRule().withMin(new Date()).build());
+		validate("email", email, onRule().withEmail(true).build());
 	}
 
 

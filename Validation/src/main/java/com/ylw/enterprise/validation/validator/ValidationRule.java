@@ -18,13 +18,15 @@
 package com.ylw.enterprise.validation.validator;
 
 public class ValidationRule {
-	boolean creditCard;
-	boolean email;
-	boolean nonBlank;
-	boolean nonNull;
-	boolean positiveNumber;
-	boolean unique;
-	boolean url;
+	private boolean creditCard;
+	private boolean email;
+	private boolean nonBlank;
+	private boolean nonNull;
+	private boolean positiveNumber;
+	private boolean unique;
+	private boolean url;
+	private Object min;
+	private Object max;
 
 	public boolean isCreditCard() {
 		return creditCard;
@@ -41,7 +43,7 @@ public class ValidationRule {
 	public void setEmail(boolean email) {
 		this.email = email;
 	}
-	
+
 	public boolean isNonBlank() {
 		return nonBlank;
 	}
@@ -82,6 +84,22 @@ public class ValidationRule {
 		this.url = url;
 	}
 
+	public Object getMin() {
+		return min;
+	}
+
+	public void setMin(Object min) {
+		this.min = min;
+	}
+
+	public Object getMax() {
+		return max;
+	}
+
+	public void setMax(Object max) {
+		this.max = max;
+	}
+
 	/** ------------------Builder Pattern-------------------- */
 	public static class Builder {
 		private ValidationRule rule;
@@ -103,7 +121,7 @@ public class ValidationRule {
 			rule.setEmail(email);
 			return this;
 		}
-		
+
 		public Builder withNonBlank(boolean nonBlank) {
 			rule.setNonBlank(nonBlank);
 			return this;
@@ -126,6 +144,16 @@ public class ValidationRule {
 
 		public Builder withUrl(boolean url) {
 			rule.setUrl(url);
+			return this;
+		}
+
+		public Builder withMin(Object min) {
+			rule.setMin(min);
+			return this;
+		}
+
+		public Builder withMax(Object max) {
+			rule.setMax(max);
 			return this;
 		}
 

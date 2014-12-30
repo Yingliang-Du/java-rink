@@ -4,3 +4,4 @@ target/
 # eclipse ignore
 .project
 .settings/
+.metadata/

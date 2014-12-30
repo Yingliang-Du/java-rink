@@ -20,32 +20,34 @@ package com.ylw.enterprise.validation.error;
 /**
  * Constant code to categrize field error messages.
  * Project using this validation framework need to create another Enum to catgrize error messages in the project.
- * 
+ *
  *
  */
 public enum FieldErrorCode {
 	//-----Exception and runtime Error Message-----
 	EXCEPTION("Exception", "field got exception:"),
-	
+
 	RUNTIME("Runtime", "field got runtime error:"),
-	
+
 	//-----Field Validation Error Message-----
 	FIELD_NON_NULL("FieldNonNull", "field is required and should not be null."),
-	
+
 	FIELD_NON_BLANK("FieldNonBlank", "field should not be blank."),
-	
+
 	FIELD_POSITIVE_NUMBER("FieldPositiveNumber", "field should be a positive number."),
-	
+
+	FIELD_MIN("FieldMin", "field should be greater than the minimum allowed"),
+
 	//-----Field Binding Error Message-----
 	NON_INTEGER("NonInteger", "field should be an Integer."),
-	
+
 	NON_FLOAT("NonFloat", "field should be a Float."),
-	
+
 	NON_DATE("NonDate", "field is not a valid Date.");
-	
+
 	private String id;
 	private String message;
-	
+
 	FieldErrorCode(String id, String message) {
 		this.id = id;
 		this.message = message;
