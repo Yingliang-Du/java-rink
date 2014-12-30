@@ -18,6 +18,8 @@
 package com.ylw.enterprise.validation.binder;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -30,29 +32,6 @@ import com.ylw.enterprise.validation.error.FieldErrorCode;
 
 public class FieldBinder {
 	private static final Logger LOGGER = Logger.getLogger(FieldBinder.class);
-
-	/**
-	 * Binding request parameters to the bean fields record errors if not succeed
-	 * 
-	 * @param bean
-	 * @param parameterMap
-	 */
-	public void bindToBean(@Nonnull AbstractValidationBean bean, @Nonnull Map<String, String[]> parameterMap) {
-		// bind when field name match the map key, record error if not succeed
-		FieldError error;
-		Field[] fields = bean.getClass().getFields();
-		for (Field field : fields) {
-			String[] stringValues = parameterMap.get(field.getName());
-			if (stringValues != null) {
-				// found a match - bind to the field
-				error = bindToField(bean, field, stringValues);
-				// add error
-				if (error != null) {
-					bean.getErrors().add(error);
-				}
-			}
-		}
-	}
 	
 	static FieldError buildFieldError(String fieldName, String message) {
 		return new FieldError(fieldName, FieldErrorCode.RUNTIME, message);
@@ -116,6 +95,9 @@ public class FieldBinder {
 			}
 			if (fieldType.equals("float")) {
 				return bindPrimitiveFloat(bean, field, stringValue);
+			}
+			if (fieldType.equals("Date")) {
+				return bindDate(bean, field, stringValue);
 			}
 		}
 		catch (IllegalArgumentException | IllegalAccessException e) {
@@ -182,6 +164,25 @@ public class FieldBinder {
 			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER);
 		}
 
+		return error;
+	}
+	
+	private static FieldError bindDate(AbstractValidationBean bean, Field field, String stringValue) 
+			throws IllegalArgumentException, IllegalAccessException {
+		FieldError error = null;
+		String fieldName = field.getName();
+		
+		SimpleDateFormat format = new SimpleDateFormat(bean.getDateFormat());
+
+		try {
+			field.set(bean, format.parse(stringValue));
+		}
+		catch (ParseException e) {
+			// The string value can not be parsed to Date
+			e.printStackTrace();
+			error = new FieldError(fieldName, FieldErrorCode.NON_DATE);
+		}
+		
 		return error;
 	}
 

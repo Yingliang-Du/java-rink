@@ -26,7 +26,16 @@ import com.ylw.enterprise.validation.bean.AbstractValidationBean;
 import com.ylw.enterprise.validation.error.FieldError;
 
 /**
- * This class need to be override to add customized binding logic
+ * 
+ * This class is designed for binding form domain object (POJO) from web form. The bind() method will do the automatic
+ * binding base on parameters match to the bean. For each form domain object in your project, you need to create a
+ * binder extends this class. You need to override the following methods to add customized binding logic:
+ *
+ * preBind() - return form domain object populated with default values required.
+ *
+ * buildParameterMap() - return parameter map conform HTTP request parameter map.
+ *
+ * postBind(@Nonnull AbstractValidationBean bean) - return the bean after post binding as needed.
  *
  */
 public abstract class AbstractBeanBinder {
@@ -42,7 +51,8 @@ public abstract class AbstractBeanBinder {
 //	}
 	
 	/**
-	 * Bind this bean from HTTP request form parameters
+	 * Binding HTTP request form parameters to the bean fields, record errors if not succeed.
+	 * 
 	 * @param parameterMap - parameter map from web request
 	 * @return this instance
 	 */

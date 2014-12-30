@@ -39,7 +39,9 @@ public enum FieldErrorCode {
 	//-----Field Binding Error Message-----
 	NON_INTEGER("NonInteger", "field should be an Integer."),
 	
-	NON_FLOAT("NonFloat", "field should be a Float.");
+	NON_FLOAT("NonFloat", "field should be a Float."),
+	
+	NON_DATE("NonDate", "field is not a valid Date.");
 	
 	private String id;
 	private String message;

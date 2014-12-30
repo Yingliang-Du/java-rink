@@ -43,10 +43,12 @@ public class MyBeanBinderTest {
 		String[] stringField = { "4bb" };
 		String[] intField = { "8" };
 		String[] integerField = { "77" };
+		String[] date = { "12/12/2014" };
 
 		parameterMap.put("stringField", stringField);
 		parameterMap.put("intField", intField);
 		parameterMap.put("integerField", integerField);
+		parameterMap.put("date", date);
 
 		// Instantiate binder 
 		myBeanBinder = new MyBeanBinder(parameterMap);

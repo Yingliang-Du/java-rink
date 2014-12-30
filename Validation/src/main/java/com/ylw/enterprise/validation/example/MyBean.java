@@ -17,6 +17,8 @@
  */
 package com.ylw.enterprise.validation.example;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -33,6 +35,7 @@ public class MyBean extends AbstractPojomaticBean {
 	private String stringField;
 	private int intField;
 	private Integer integerField;
+	private Date date;
 	private String creditCardNumber;
 	private String email;
 	private String url;
@@ -69,6 +72,19 @@ public class MyBean extends AbstractPojomaticBean {
 
 	public void setIntegerField(Integer integerField) {
 		this.integerField = integerField;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+	
+	public String getDateAsText() {
+		SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+		return format.format(date);
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public String getCreditCardNumber() {

@@ -37,6 +37,17 @@ import com.ylw.enterprise.validation.validator.ValidationRule;
 
 public abstract class AbstractValidationBean {
 	private static final Logger LOGGER = Logger.getLogger(AbstractValidationBean.class);
+	
+	// Field text format
+	protected String dateFormat = "MM/dd/yyyy"; 
+
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
 
 	// -------------------Validation---------------------
 	// A set of error messages
