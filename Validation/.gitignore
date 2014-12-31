@@ -1,7 +1,8 @@
 # maven ignore
-.classpath
 target/
+settings.xml
 
 # eclipse ignore
+.classpath
 .project
 .settings/
