@@ -16,6 +16,35 @@
 		<jersey.version>2.13</jersey.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Yingliang Du</name>
+			<email>yingliang_d@yahoo.com</email>
+			<organization>You Link Web</organization>
+			<organizationUrl>http://www.y-l-w.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:Yingliang-Du/java-rink.git</connection>
+		<developerConnection>scm:git:git@github.com:Yingliang-Du/java-rink.git</developerConnection>
+		<url>git@github.com:Yingliang-Du/java-rink.git</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>sonatype</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+	</distributionManagement>
 
 	<dependencyManagement>
 		<dependencies>
@@ -140,7 +169,21 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>	
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>  		
 		</plugins>
 	</build>
 
