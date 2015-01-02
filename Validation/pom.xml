@@ -11,7 +11,7 @@
 
 	<artifactId>Validation</artifactId>
 	<name>Validation</name>
-	<url>http://maven.apache.org</url>
+	<description>A Java web validation framework</description>
 
 	<dependencies>
 		<dependency>
