@@ -22,6 +22,9 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.apache.log4j.Logger;
+
+import com.google.common.collect.ObjectArrays;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
 import com.ylw.enterprise.validation.error.FieldError;
 
@@ -39,6 +42,8 @@ import com.ylw.enterprise.validation.error.FieldError;
  *
  */
 public abstract class AbstractBeanBinder {
+	private static final Logger LOGGER = Logger.getLogger(AbstractBeanBinder.class);
+	
 	/**
 	 * Override and put your binding logic
 	 * @param bean
@@ -59,7 +64,9 @@ public abstract class AbstractBeanBinder {
 	private AbstractValidationBean bind(AbstractValidationBean bean, @Nonnull Map<String, String[]> parameterMap) {
 		FieldError error;
 		// get all fields of this bean
-		Field[] fields = bean.getClass().getDeclaredFields();
+		Class<?> clazz = bean.getClass();
+		Field[] fields = clazz.getDeclaredFields();
+		fields = getFields(clazz, fields);
 		// bind parameter to each matching field
 		for (int i=0; i<fields.length; i++) {
 			Field field = fields[i];
@@ -76,6 +83,23 @@ public abstract class AbstractBeanBinder {
 		
 		// return this bean
 		return bean;
+	}
+	
+	/**
+	 * Get all fields of object hierarchy - sub class of AbstractValidationBean
+	 */
+	private Field[] getFields(Class<?> clazz, Field[] fields) {
+		clazz = clazz.getSuperclass();
+		if (clazz.getSimpleName().equals("AbstractValidationBean")) {
+			// return the array of fields
+			return fields;
+		}
+		else {
+			// Use Guava to concatenate two arrays
+			fields = ObjectArrays.concat(fields, clazz.getDeclaredFields(), Field.class);
+			// recursive call
+			return getFields(clazz, fields);
+		}
 	}
 	
 	/**

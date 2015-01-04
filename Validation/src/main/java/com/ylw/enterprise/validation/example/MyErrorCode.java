@@ -15,41 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ylw.enterprise.validation.error;
+package com.ylw.enterprise.validation.example;
 
-import org.pojomatic.Pojomatic;
-import org.pojomatic.annotations.AutoProperty;
+import com.ylw.enterprise.validation.error.ErrorMessage;
 
-@AutoProperty
-public abstract class AbstractError {
-
-	protected String message;
-
+/**
+ * Example ENUM for defining error message
+ *
+ */
+public enum MyErrorCode implements ErrorMessage {
+	BIRTH_DATE_TOO_LATE("BirthDateTooLate", "Birth Date can not be later than today!"),
+	EXPIRATION_DATE_TOO_EARLY("ExpirationDateTooEarly", "Expiration Date can not be earlier than today!");
+	
+	private String id;
+	private String message;
+	
 	/**
-	 * Default constructor for sub class
+	 * Construct error object
 	 */
-	public AbstractError() {
-		super();
+	private MyErrorCode(String id, String message) {
+		this.id = id;
+		this.message = message;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.ylw.enterprise.validation.error.ErrorMessage#getMessage()
+	 */
+	@Override
 	public String getMessage() {
+		// return message
 		return message;
 	}
-
-// ---------------Override equals, toString and hashCode--------------
-	@Override
-	public boolean equals(Object other) {
-		return Pojomatic.equals(this, other);
-	}
-
-	@Override
-	public String toString() {
-		return Pojomatic.toString(this);
-	}
-
-	@Override
-	public int hashCode() {
-		return Pojomatic.hashCode(this);
-	}
-
 }

@@ -22,22 +22,39 @@ import javax.annotation.Nonnull;
 import org.pojomatic.annotations.AutoProperty;
 
 /**
- * Java representation of field error message.
- * Project using this validation framework need to create a class which extends this class
- * to represent errors for the project.
- *
+ * Java representation of error message for each field in domain object.
+ * 
  */
 @AutoProperty
-public class FieldError extends AbstractError {
+public class FieldError extends BeanError {
 	//	private FieldErrorCode code;
 	private String fieldName;
 	
 // ---------------Constructors--------------
+	/**
+	 * Construct error base on customized error message
+	 */
+	public FieldError(String fieldName, String errorMessage) {
+		this.fieldName = fieldName;
+		this.message = errorMessage;
+	}
+	
+	/**
+	 * Construct error base on FieldErrorCode message
+	 * @param fieldName
+	 * @param code - FieldErrorCode
+	 */
 	public FieldError(@Nonnull String fieldName, @Nonnull FieldErrorCode code) {
 		this.fieldName = fieldName;
 		this.message = buildMessage(fieldName, code);
 	}
 	
+	/**
+	 * Construct error base on FieldErrorCode and extra error message
+	 * @param fieldName
+	 * @param code - FieldErrorCode
+	 * @param message
+	 */
 	public FieldError(@Nonnull String fieldName, @Nonnull FieldErrorCode code, @Nonnull String message) {
 		this.fieldName = fieldName;
 		this.message = buildMessage(fieldName, code, message);

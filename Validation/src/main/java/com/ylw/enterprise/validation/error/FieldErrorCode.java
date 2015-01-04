@@ -23,7 +23,7 @@ package com.ylw.enterprise.validation.error;
  *
  *
  */
-public enum FieldErrorCode {
+public enum FieldErrorCode implements ErrorMessage {
 	//-----Exception and runtime Error Message-----
 	EXCEPTION("Exception", "field got exception:"),
 
@@ -57,6 +57,7 @@ public enum FieldErrorCode {
 		return id;
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}

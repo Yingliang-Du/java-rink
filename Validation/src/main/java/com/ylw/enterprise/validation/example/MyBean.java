@@ -35,20 +35,10 @@ public class MyBean extends AbstractPojomaticBean {
 	private String stringField;
 	private int intField;
 	private Integer integerField;
-	private Date date;
+	private Date expirDate;
 	private String creditCardNumber;
 	private String email;
 	private String url;
-	// Simulate runtime error message
-	private String errorMessage;
-
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
 
 	public String getStringField() {
 		return stringField;
@@ -74,17 +64,12 @@ public class MyBean extends AbstractPojomaticBean {
 		this.integerField = integerField;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getExpirDate() {
+		return expirDate;
 	}
 
-	public String getDateAsText() {
-		SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-		return format.format(date);
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
+	public void setExpirDate(Date expirDate) {
+		this.expirDate = expirDate;
 	}
 
 	public String getCreditCardNumber() {
@@ -110,6 +95,20 @@ public class MyBean extends AbstractPojomaticBean {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+	/** -----------------Utilities------------------- */
+	public String getExpirDateAsText() {
+		if (expirDate != null) {
+			// format date
+			SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+			return format.format(expirDate);
+		}
+		else {
+			// return null if date is null
+			return null;
+		}
+	}
+	
 
 	/** ------------------Builder--------------------- */
 	public static class Builder {
@@ -157,10 +156,6 @@ public class MyBean extends AbstractPojomaticBean {
 			return this;
 		}
 
-		public Builder withErrorMessage(String errorMessage) {
-			myBean.setErrorMessage(errorMessage);
-			return this;
-		}
 	}
 
 	/** ------------------Validation-------------------- */
@@ -173,8 +168,8 @@ public class MyBean extends AbstractPojomaticBean {
 		// Specify validation rule and validate each field that need to be validated
 		validate("stringField", stringField, onRule().withNonNull(true).withNonBlank(true).build());
 		validate("intField", intField, onRule().withPositiveNumber(true).build());
-		validate("date", date, onRule().withMin(new Date()).build());
-		validate("email", email, onRule().withEmail(true).build());
+		validate("expirDate", expirDate, onRule().withMin(new Date()).build(), MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
+		validate("email", email, onRule().withNonNull(true).build(), "Customized error message for email field");
 	}
 
 

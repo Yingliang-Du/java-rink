@@ -27,14 +27,14 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.ylw.enterprise.validation.error.AbstractError;
+import com.ylw.enterprise.validation.error.BeanError;
 
 public class MyBeanBinderTest {
 	private static final Logger LOGGER = Logger.getLogger(MyBeanBinderTest.class);
 
 	private MyBeanBinder myBeanBinder;
 	private MyBean myBean;
-	private Set<? extends AbstractError> errors;
+	private Set<? extends BeanError> errors;
 
 	@Before
 	public void initInstance() {
@@ -43,12 +43,12 @@ public class MyBeanBinderTest {
 		String[] stringField = { "4bb" };
 		String[] intField = { "8" };
 		String[] integerField = { "77" };
-		String[] date = { "12/12/2014" };
+		String[] expirDate = { "12/12/2014" };
 
 		parameterMap.put("stringField", stringField);
 		parameterMap.put("intField", intField);
 		parameterMap.put("integerField", integerField);
-		parameterMap.put("date", date);
+		parameterMap.put("expirDate", expirDate);
 
 		// Instantiate binder 
 		myBeanBinder = new MyBeanBinder(parameterMap);

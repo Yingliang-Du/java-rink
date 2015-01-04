@@ -54,7 +54,6 @@ public class MyBeanBinder extends AbstractBeanBinder {
 	protected AbstractValidationBean postBind(AbstractValidationBean bean) {
 		// Post bind process
 		MyBean myBean = (MyBean)bean;
-		myBean.setErrorMessage("Bind this field in post bind");
 		return myBean;
 	}
 

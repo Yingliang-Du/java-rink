@@ -29,7 +29,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ylw.enterprise.validation.binder.AbstractBeanBinder;
 import com.ylw.enterprise.validation.binder.FieldBinder;
-import com.ylw.enterprise.validation.error.AbstractError;
+import com.ylw.enterprise.validation.error.BeanError;
+import com.ylw.enterprise.validation.error.ErrorMessage;
 import com.ylw.enterprise.validation.error.FieldError;
 import com.ylw.enterprise.validation.error.FieldErrorCode;
 import com.ylw.enterprise.validation.validator.FieldValidator;
@@ -51,16 +52,24 @@ public abstract class AbstractValidationBean {
 
 	// -------------------Validation---------------------
 	// A set of error messages
-	protected final Set<AbstractError> errors = Sets.newHashSet();
+	protected final Set<BeanError> errors = Sets.newHashSet();
 	private final Map<String, Set<FieldError>> fieldErrorMap = Maps.newTreeMap();
 
 	/* Deal with errors */
-	public Set<AbstractError> getErrors() {
+	public Set<BeanError> getErrors() {
 		return errors;
 	}
 	
-	public void addError(AbstractError error) {
+	public void addError(BeanError error) {
 		errors.add(error);
+	}
+	
+	/**
+	 * Construct and add error from general error message
+	 * @param message
+	 */
+	public void addError(String message) {
+		addError(new BeanError(message));
 	}
 	
 	/** See if there are errors in this object */
@@ -98,6 +107,27 @@ public abstract class AbstractValidationBean {
 	 */
 	public abstract void validate();
 	
+	/**
+	 * Validate the field base on the validation rule with customized error message
+	 * @param fieldName
+	 * @param fieldValue
+	 * @param validationRule
+	 * @param errorMessage - customized error message
+	 */
+	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, String errorMessage) {
+		validate(validationRule, fieldName, fieldValue, errorMessage);		 
+	}
+	
+	/**
+	 * Validate the field base on the validation rule with customized error message code
+	 * @param fieldName
+	 * @param fieldValue
+	 * @param validationRule
+	 * @param message - customized error code
+	 */
+	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, ErrorMessage message) {
+		validate(validationRule, fieldName, fieldValue, message);		 
+	}
 	
 	/**
 	 * Validate the field base on the validation rule
@@ -106,19 +136,47 @@ public abstract class AbstractValidationBean {
 	 * @param validationRule
 	 */
 	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule) {
+		validate(validationRule, fieldName, fieldValue, null);		
+	}
+	
+	/*
+	 * Validate field value base on validation rule
+	 * Create error base on error code or customized error
+	 */
+	private void validate(ValidationRule validationRule, String fieldName, Object fieldValue, Object customError) {
 		// Validate
 		FieldValidator validator = new FieldValidator(validationRule);
 		FieldErrorCode fieldErrorCode = validator.validate(fieldValue);
-
-		// Deal with violated rules and add field error to errors
-		if (fieldErrorCode == null) { 
-			// There are no errors
-			return;
+		// Deal with violated rules and add field error to errors if any
+		if (fieldErrorCode != null) {
+			// There is error - build error object 
+			FieldError error = new FieldError(fieldName, fieldErrorCode);
+			if (customError == null) {
+				// build error object base on error code
+				error = new FieldError(fieldName, fieldErrorCode);
+			}
+			else {
+				if (customError instanceof ErrorMessage) {
+					error = new FieldError(fieldName, ((ErrorMessage) customError).getMessage());
+				}
+				else if (customError instanceof String) {
+					error = new FieldError(fieldName, (String) customError);
+				}
+				else {
+					LOGGER.warn("Unricegnized customized message -> " + customError);
+				}
+			}
+			// Add field error
+			addFieldError(fieldName, error);
 		}
-
-		// Build error and add to the set
-		FieldError error = new FieldError(fieldName, fieldErrorCode);
-		// add to the object error set
+	}
+	
+	/*
+	 * Add field error to error set and field error map
+	 */
+	private void addFieldError(String fieldName, FieldError error) {
+		
+		// Add error to the object error set
 		errors.add(error);
 		// add to the field error map
 		Set<FieldError> fieldErrors = fieldErrorMap.get(fieldName);
