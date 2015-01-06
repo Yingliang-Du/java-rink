@@ -93,6 +93,9 @@ public class FieldBinder {
 			if (fieldType.equals("Integer")) {
 				return bindInteger(bean, field, stringValue);
 			}
+			if (fieldType.equals("Long") || fieldType.equals("long")) {
+				return bindLong(bean, field, stringValue);
+			}
 			if (fieldType.equals("float")) {
 				return bindPrimitiveFloat(bean, field, stringValue);
 			}
@@ -146,6 +149,25 @@ public class FieldBinder {
 		catch (NumberFormatException e) {
 			e.printStackTrace();
 			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER);
+		}
+
+		return error;
+	}
+	
+	private static FieldError bindLong(AbstractValidationBean bean, Field field, String stringValue)
+			throws IllegalArgumentException, IllegalAccessException {
+		FieldError error = null;
+		String fieldName = field.getName();
+
+		try {
+			// Bind the field with the valid value
+			// Primitive long should also work because of auto box of Java
+			field.set(bean, Long.valueOf(stringValue));
+		}
+		catch (NumberFormatException e) {
+			// Do not bind - use the default value defined in the bean
+			e.printStackTrace();
+			error = new FieldError(fieldName, FieldErrorCode.NON_LONG);
 		}
 
 		return error;

@@ -40,6 +40,8 @@ public enum FieldErrorCode implements ErrorMessage {
 
 	//-----Field Binding Error Message-----
 	NON_INTEGER("NonInteger", "field should be an Integer."),
+	
+	NON_LONG("NonLong", "field should be a Long."),
 
 	NON_FLOAT("NonFloat", "field should be a Float."),
 
