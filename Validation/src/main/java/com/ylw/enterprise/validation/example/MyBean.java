@@ -164,12 +164,14 @@ public class MyBean extends AbstractPojomaticBean {
 	 * Validate on fields need to be validated
 	 */
 	@Override
-	public void validate() {
+	public MyBean validate() {
 		// Specify validation rule and validate each field that need to be validated
-		validate("stringField", stringField, onRule().withNonNull(true).withNonBlank(true).build());
+		validate("stringField", stringField, onRule().withRequired(true).withNonBlank(true).build());
 		validate("intField", intField, onRule().withPositiveNumber(true).build());
 		validate("expirDate", expirDate, onRule().withMin(new Date()).build(), MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
-		validate("email", email, onRule().withNonNull(true).build(), "Customized error message for email field");
+		validate("email", email, onRule().withRequired(true).build(), "Customized error message for email field");
+		// Return this bean
+		return this;
 	}
 
 

@@ -105,7 +105,7 @@ public abstract class AbstractValidationBean {
 	/**
 	 * Override this method to specify validation rule for each field in the object and validate.
 	 */
-	public abstract void validate();
+	public abstract AbstractValidationBean validate();
 	
 	/**
 	 * Validate the field base on the validation rule with customized error message

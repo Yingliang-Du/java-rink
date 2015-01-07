@@ -81,7 +81,7 @@ public class FieldValidator {
 	public FieldErrorCode validate(Object fieldValue) {
 
 		// Check if the field is required and deal with NonNull rule
-		if (validationRule.isNonNull() && fieldValue == null) {
+		if (validationRule.isRequired() && fieldValue == null) {
 			return FieldErrorCode.FIELD_NON_NULL;
 		}
 

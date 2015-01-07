@@ -21,7 +21,7 @@ public class ValidationRule {
 	private boolean creditCard;
 	private boolean email;
 	private boolean nonBlank;
-	private boolean nonNull;
+	private boolean required;
 	private boolean positiveNumber;
 	private boolean unique;
 	private boolean url;
@@ -52,12 +52,12 @@ public class ValidationRule {
 		this.nonBlank = nonBlank;
 	}
 
-	public boolean isNonNull() {
-		return nonNull;
+	public boolean isRequired() {
+		return required;
 	}
 
-	public void setNonNull(boolean nonNull) {
-		this.nonNull = nonNull;
+	public void setRequired(boolean required) {
+		this.required = required;
 	}
 
 	public boolean isPositiveNumber() {
@@ -127,8 +127,8 @@ public class ValidationRule {
 			return this;
 		}
 
-		public Builder withNonNull(boolean nonNull) {
-			rule.setNonNull(nonNull);
+		public Builder withRequired(boolean required) {
+			rule.setRequired(required);
 			return this;
 		}
 
