@@ -15,9 +15,7 @@ public class DateUtilsTest {
 		// Test normal date
 		Date date = DateUtils.getDate(11, 2022);
 		LOGGER.info("Date instance for month:11 and year:2022 -> " + date);
-		assertNotNull(
-				"Date instance created from month and year should not be null",
-				date);
+		assertNotNull("Date instance created from month and year should not be null", date);
 		assertTrue("Verify month in Date instance", date.getMonth() + 1 == 11);
 		LOGGER.info("Year in Date instance -> " + date.getYear());
 		// assertTrue("Verify year in Date instance", date.getYear() == 2022);
