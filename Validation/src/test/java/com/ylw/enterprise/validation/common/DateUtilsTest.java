@@ -28,32 +28,4 @@ public class DateUtilsTest {
 		date = DateUtils.getDate(-1, -1);
 		LOGGER.info("Date instance for month:-1 and year:-1 -> " + date);
 	}
-
-	@Test
-	public void formatTest() {
-		Date date = new Date();
-		// Test short date format
-		String dateStr = DateUtils.format(date, "short");
-		LOGGER.info("The short date format -> " + dateStr);
-
-		// Test medium date format
-		dateStr = DateUtils.format(date, "medium");
-		LOGGER.info("The short date format -> " + dateStr);
-
-		// Test long date format
-		dateStr = DateUtils.format(date, "long");
-		LOGGER.info("The short date format -> " + dateStr);
-
-		// Test full date format
-		dateStr = DateUtils.format(date, "full");
-		LOGGER.info("The short date format -> " + dateStr);
-
-		// Test user defined format - "MMyyyy"
-		dateStr = DateUtils.format(date, "MMyyyy");
-		LOGGER.info("The short date format -> " + dateStr);
-
-		// Test user defined format - "yyyyMM"
-		dateStr = DateUtils.format(date, "yyyyMM");
-		LOGGER.info("The short date format -> " + dateStr);
-	}
 }
