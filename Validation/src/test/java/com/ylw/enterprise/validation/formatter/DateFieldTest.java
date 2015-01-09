@@ -21,23 +21,36 @@ public class DateFieldTest {
 
 		// Test medium date format
 		dateStr = DateField.format(date, "medium");
-		LOGGER.info("The short date format -> " + dateStr);
+		LOGGER.info("The medium date format -> " + dateStr);
 
 		// Test long date format
 		dateStr = DateField.format(date, "long");
-		LOGGER.info("The short date format -> " + dateStr);
+		LOGGER.info("The long date format -> " + dateStr);
 
 		// Test full date format
 		dateStr = DateField.format(date, "full");
-		LOGGER.info("The short date format -> " + dateStr);
+		LOGGER.info("The full date format -> " + dateStr);
 
 		// Test user defined format - "MMyyyy"
 		dateStr = DateField.format(date, "MMyyyy");
-		LOGGER.info("The short date format -> " + dateStr);
+		LOGGER.info("The MMyyyy date format -> " + dateStr);
 
 		// Test user defined format - "yyyyMM"
 		dateStr = DateField.format(date, "yyyyMM");
-		LOGGER.info("The short date format -> " + dateStr);
+		LOGGER.info("The yyyyMM date format -> " + dateStr);
+
+		// Test invalid format - "InvalidFormat"
+		dateStr = DateField.format(date, "InvalidFormat");
+		LOGGER.info("The InvalidFormat date format -> " + dateStr);
+
+		// Test null format - null
+		dateStr = DateField.format(date, null);
+		LOGGER.info("The null date format -> " + dateStr);
+
+		// Test null date value
+		dateStr = DateField.format(null, "short");
+		LOGGER.info("The null date value -> " + dateStr);
+
 	}
 
 }

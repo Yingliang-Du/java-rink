@@ -28,27 +28,4 @@ import org.junit.Test;
 public class NumberUtilsTest {
 	private static final Logger LOGGER = Logger.getLogger(NumberUtilsTest.class);
 
-	@Test
-	public void formatTest() {
-		// Test default format
-		String numberStr = NumberUtils.format(123456.789, "default");
-		LOGGER.info("The default format of number 123456.789 -> " + numberStr);
-
-		// Test integer format
-		numberStr = NumberUtils.format(123456.789, "integer");
-		LOGGER.info("The integer format of number 123456.789 -> " + numberStr);
-
-		// Test percent format
-		numberStr = NumberUtils.format(123456.789, "percent");
-		LOGGER.info("The percent format of number 123456.789 -> " + numberStr);
-
-		// Test currency format
-		numberStr = NumberUtils.format(123456.789, "currency");
-		LOGGER.info("The currency format of number 123456.789 -> " + numberStr);
-
-		// Test default format
-		numberStr = NumberUtils.format(123456.789, "#,##0.##");
-		LOGGER.info("The #,##0.## format of number 123456.789 -> " + numberStr);
-	}
-
 }

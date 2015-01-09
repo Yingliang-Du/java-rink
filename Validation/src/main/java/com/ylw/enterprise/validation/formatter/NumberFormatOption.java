@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.ylw.enterprise.validation.common;
+package com.ylw.enterprise.validation.formatter;
 
 import java.math.RoundingMode;
 

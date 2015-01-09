@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ylw.enterprise.validation.common;
+package com.ylw.enterprise.validation.formatter;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -60,8 +60,7 @@ enum NumberFormatType {
 	/**
 	 * Build a new number format.
 	 * 
-	 * @param locale
-	 *            The locale to use.
+	 * @param locale - The locale to use.
 	 * @return A new number format.
 	 */
 	public abstract NumberFormat numberFormat(Locale locale);

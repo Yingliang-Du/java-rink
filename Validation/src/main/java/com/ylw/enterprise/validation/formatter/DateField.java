@@ -8,7 +8,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.apache.log4j.Logger;
+
 public class DateField {
+	private static final Logger LOGGER = Logger.getLogger(DateField.class);
 
 	private static Map<String, Integer> formats = new HashMap<String, Integer>() {
 		{
@@ -56,7 +59,13 @@ public class DateField {
 	public static String format(Date date, String pattern, TimeZone timeZone, Locale locale) {
 		// If date is null - return
 		if (date == null) {
+			LOGGER.warn("Return null when date value is null");
 			return null;
+		}
+		// If pattern is null - use "short"
+		if (pattern == null) {
+			LOGGER.warn("Use short date format when pattern is null");
+			pattern = "short";
 		}
 		// Format date
 		DateFormat dateFormat;
@@ -65,9 +74,20 @@ public class DateField {
 		// Deal with format
 		Integer format = formats.get(pattern);
 		if (format == null) {
-			dateFormat = new SimpleDateFormat(pattern, locale);
+			// User defined format
+			try {
+				dateFormat = new SimpleDateFormat(pattern, locale);
+			}
+			catch (IllegalArgumentException ex) {
+				// Invalid format pattern - use short format by default
+				dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+				// Log error message
+				LOGGER.warn("Use short date format when input invalid format pattern - " + pattern);
+				ex.printStackTrace();
+			}
 		}
 		else {
+			// Predefined formats
 			dateFormat = DateFormat.getDateInstance(format, locale);
 		}
 		// Deal with time zone
