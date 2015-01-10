@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 
 import com.ylw.enterprise.validation.error.FieldErrorCode;
 
-
 public class FieldValidator {
 	private final static Logger LOGGER = Logger.getLogger(FieldValidator.class);
 
@@ -37,46 +36,47 @@ public class FieldValidator {
 
 	/**
 	 * validate field validation rule
+	 * 
 	 * @return violation rule indicate rule violated; null if there no rule violated
 	 */
-//	public ViolationRule validate(Object fieldValue) {
-//
-//		// Check if the field is required and deal with NonNull rule
-//		if (validationRule.isNonNull() && fieldValue == null) {
-//			return ViolationRule.NONNULL;
-//		}
-//
-//		// Deal with NonBlank rule for string type field
-//		if (fieldValue != null && validationRule.isNonBlank()) {
-//			try {
-//				String valueString = (String)fieldValue;
-//				if (valueString.trim().equals("")) {
-//					return ViolationRule.NONBLANK;
-//				}
-//			}
-//			catch (ClassCastException e) {
-//				LOGGER.error("The field is not an instance of String, so NonBlank rule can not apply.");
-//				e.printStackTrace();
-//			}
-//		}
-//
-//		// Deal with PositiveNumber rule
-//		if (fieldValue != null && validationRule.isPositiveNumber()) {
-//			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
-//			if (fieldValue instanceof Number) {
-//				Number vNum = (Number)fieldValue;
-//				if (vNum.intValue() < 1) {
-//					return ViolationRule.POSITIVENUMBER;
-//				}
-//			}
-//			else {
-//				LOGGER.error("The field is not an instance of Number, so PositiveNumber rule can not apply.");
-//			}
-//		}
-//
-//		// Return null if there is no rule violated
-//		return null;
-//	}
+	// public ViolationRule validate(Object fieldValue) {
+	//
+	// // Check if the field is required and deal with NonNull rule
+	// if (validationRule.isNonNull() && fieldValue == null) {
+	// return ViolationRule.NONNULL;
+	// }
+	//
+	// // Deal with NonBlank rule for string type field
+	// if (fieldValue != null && validationRule.isNonBlank()) {
+	// try {
+	// String valueString = (String)fieldValue;
+	// if (valueString.trim().equals("")) {
+	// return ViolationRule.NONBLANK;
+	// }
+	// }
+	// catch (ClassCastException e) {
+	// LOGGER.error("The field is not an instance of String, so NonBlank rule can not apply.");
+	// e.printStackTrace();
+	// }
+	// }
+	//
+	// // Deal with PositiveNumber rule
+	// if (fieldValue != null && validationRule.isPositiveNumber()) {
+	// LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
+	// if (fieldValue instanceof Number) {
+	// Number vNum = (Number)fieldValue;
+	// if (vNum.intValue() < 1) {
+	// return ViolationRule.POSITIVENUMBER;
+	// }
+	// }
+	// else {
+	// LOGGER.error("The field is not an instance of Number, so PositiveNumber rule can not apply.");
+	// }
+	// }
+	//
+	// // Return null if there is no rule violated
+	// return null;
+	// }
 
 	public FieldErrorCode validate(Object fieldValue) {
 
@@ -88,7 +88,7 @@ public class FieldValidator {
 		// Deal with NonBlank rule for string type field
 		if (fieldValue != null && validationRule.isNonBlank()) {
 			try {
-				String valueString = (String)fieldValue;
+				String valueString = (String) fieldValue;
 				if (valueString.trim().equals("")) {
 					return FieldErrorCode.FIELD_NON_BLANK;
 				}
@@ -103,7 +103,7 @@ public class FieldValidator {
 		if (fieldValue != null && validationRule.isPositiveNumber()) {
 			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
 			if (fieldValue instanceof Number) {
-				Number vNum = (Number)fieldValue;
+				Number vNum = (Number) fieldValue;
 				if (vNum.intValue() < 1) {
 					return FieldErrorCode.FIELD_POSITIVE_NUMBER;
 				}
@@ -113,9 +113,15 @@ public class FieldValidator {
 			}
 		}
 
-		// Deal with min (minimum) rule
+		// Validate min (minimum) rule
 		Object minValue = validationRule.getMin();
 		if (fieldValue != null && minValue != null) {
+			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
+			return validateMin(fieldValue, minValue);
+		}
+
+		// Validate credit card rule
+		if (fieldValue != null && validationRule.isCreditCard()) {
 			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
 			return validateMin(fieldValue, minValue);
 		}
@@ -142,7 +148,21 @@ public class FieldValidator {
 			}
 		}
 
-		LOGGER.warn("The validation logic for field type -" + fieldValue.getClass().getName() + "- had not been implemented yet");
+		LOGGER.warn("The validation logic for field type -" + fieldValue.getClass().getName()
+				+ "- had not been implemented yet");
 		return null;
+	}
+	
+	private FieldErrorCode validateCreditCard(Object fieldValue) {
+		try {
+			String valueString = (String) fieldValue;
+			if (valueString.trim().equals("")) {
+				return FieldErrorCode.FIELD_NON_BLANK;
+			}
+		}
+		catch (ClassCastException e) {
+			LOGGER.error("The field is not an instance of String, so Credit Card rule can not apply.");
+			e.printStackTrace();
+		}
 	}
 }
