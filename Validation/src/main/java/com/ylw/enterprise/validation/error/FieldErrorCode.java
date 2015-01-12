@@ -18,8 +18,8 @@
 package com.ylw.enterprise.validation.error;
 
 /**
- * Constant code to categrize field error messages.
- * Project using this validation framework need to create another Enum to catgrize error messages in the project.
+ * Constant code to categorize field error messages.
+ * Project using this validation framework need to create another Enum to categorize error messages in the project.
  *
  *
  */
@@ -45,7 +45,9 @@ public enum FieldErrorCode implements ErrorMessage {
 
 	NON_FLOAT("NonFloat", "field should be a Float."),
 
-	NON_DATE("NonDate", "field is not a valid Date.");
+	NON_DATE("NonDate", "field is not a valid Date."),
+	
+	NON_CREDIT_CARD("NonCreditCard", "field is not a valid Credit Card Number.");
 
 	private String id;
 	private String message;

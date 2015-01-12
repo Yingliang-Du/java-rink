@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.log4j.Logger;
 
+import com.ylw.enterprise.validation.common.CreditCardUtils;
 import com.ylw.enterprise.validation.error.FieldErrorCode;
 
 public class FieldValidator {
@@ -123,7 +124,7 @@ public class FieldValidator {
 		// Validate credit card rule
 		if (fieldValue != null && validationRule.isCreditCard()) {
 			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
-			return validateMin(fieldValue, minValue);
+			return validateCreditCard(fieldValue);
 		}
 
 		// Return null if there is no rule violated
@@ -155,14 +156,19 @@ public class FieldValidator {
 	
 	private FieldErrorCode validateCreditCard(Object fieldValue) {
 		try {
-			String valueString = (String) fieldValue;
-			if (valueString.trim().equals("")) {
-				return FieldErrorCode.FIELD_NON_BLANK;
+			String cardNumber = (String) fieldValue;
+			if (!(CreditCardUtils.isVisa(cardNumber)
+					|| CreditCardUtils.isMasterCard(cardNumber)
+					|| CreditCardUtils.isAmericanExpress(cardNumber)
+					|| CreditCardUtils.isDiscover(cardNumber))) {
+				return FieldErrorCode.NON_CREDIT_CARD;
 			}
 		}
 		catch (ClassCastException e) {
 			LOGGER.error("The field is not an instance of String, so Credit Card rule can not apply.");
 			e.printStackTrace();
 		}
+		
+		return null;
 	}
 }

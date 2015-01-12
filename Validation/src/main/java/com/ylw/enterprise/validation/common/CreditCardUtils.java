@@ -27,17 +27,19 @@ public class CreditCardUtils {
 	private static String NON_DIGIT = "[^0-9]+";
 	private static String SPACE_DASH = "[ -]+";
 	private static Pattern ALL_DIGITS = Pattern.compile("\\d*");
-	//  All Visa card numbers start with a 4. New cards have 16 digits. Old cards have 13.
+	// All credit card numbers have move than 12 digits
+	private static Pattern NON_MASKED = Pattern.compile("[0-9]{12}[0-9]+");
+	// All Visa card numbers start with a 4. New cards have 16 digits. Old cards have 13.
 	private static Pattern VISA = Pattern.compile("^4[0-9]{12}(?:[0-9]{3})?$");
-	//  All MasterCard numbers start with the numbers 51 through 55. All have 16 digits.
+	// All MasterCard numbers start with the numbers 51 through 55. All have 16 digits.
 	private static Pattern MASTER_CARD = Pattern.compile("^5[1-5][0-9]{14}$");
-	//  American Express card numbers start with 34 or 37 and have 15 digits.
+	// American Express card numbers start with 34 or 37 and have 15 digits.
 	private static Pattern AMERICAN_EXPRESS = Pattern.compile("^3[47][0-9]{13}$");
-	//  Diners Club card numbers begin with 300 through 305, 36 or 38. All have 14 digits.
+	// Diners Club card numbers begin with 300 through 305, 36 or 38. All have 14 digits.
 	private static Pattern DINERS_CLUB = Pattern.compile(" ^3(?:0[0-5]|[68][0-9])[0-9]{11}$");
-	//  Discover card numbers begin with 6011 or 65. All have 16 digits.
+	// Discover card numbers begin with 6011 or 65. All have 16 digits.
 	private static Pattern DISCOVER = Pattern.compile("^6(?:011|5[0-9]{2})[0-9]{12}$");
-	//  JCB cards beginning with 2131 or 1800 have 15 digits. JCB cards beginning with 35 have 16 digits.
+	// JCB cards beginning with 2131 or 1800 have 15 digits. JCB cards beginning with 35 have 16 digits.
 	private static Pattern JCB = Pattern.compile("^(?:2131|1800|35\\d{3})\\d{11}$");
 
 	public static String removeNonDigit(String cardNumber) {
@@ -48,31 +50,53 @@ public class CreditCardUtils {
 		return cardNumber.replaceAll(SPACE_DASH, "");
 	}
 
-	public static boolean isUnMasked(String cardNumber) {
-	  return ALL_DIGITS.matcher(cardNumber).matches();
+	public static boolean isAllDigits(String cardNumber) {
+		return ALL_DIGITS.matcher(cardNumber).matches();
+	}
+
+	public static boolean isNonMasked(String cardNumber) {
+		return NON_MASKED.matcher(cardNumber).matches();
 	}
 
 	public static boolean isVisa(String cardNumber) {
-		return false;
+		// Remove dash or space (allowed in credit card number)
+		removeSpaceDash(cardNumber);
+		// Verify if it is Visa card
+		return VISA.matcher(cardNumber).matches();
 	}
 
 	public static boolean isMasterCard(String cardNumber) {
-		return false;
+		// Remove dash or space (allowed in credit card number)
+		removeSpaceDash(cardNumber);
+		// Verify if it is Visa card
+		return MASTER_CARD.matcher(cardNumber).matches();
 	}
 
 	public static boolean isAmericanExpress(String cardNumber) {
-		return false;
+		// Remove dash or space (allowed in credit card number)
+		removeSpaceDash(cardNumber);
+		// Verify if it is Visa card
+		return AMERICAN_EXPRESS.matcher(cardNumber).matches();
 	}
 
 	public static boolean isDiscover(String cardNumber) {
-		return false;
+		// Remove dash or space (allowed in credit card number)
+		removeSpaceDash(cardNumber);
+		// Verify if it is Visa card
+		return DISCOVER.matcher(cardNumber).matches();
 	}
 
 	public static boolean isDinersClub(String cardNumber) {
-		return false;
+		// Remove dash or space (allowed in credit card number)
+		removeSpaceDash(cardNumber);
+		// Verify if it is Visa card
+		return DINERS_CLUB.matcher(cardNumber).matches();
 	}
 
 	public static boolean isJCB(String cardNumber) {
-		return false;
+		// Remove dash or space (allowed in credit card number)
+		removeSpaceDash(cardNumber);
+		// Verify if it is Visa card
+		return JCB.matcher(cardNumber).matches();
 	}
 }
