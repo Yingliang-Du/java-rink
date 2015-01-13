@@ -22,7 +22,7 @@ This is a Java Validation, Binding and Formatting framework for web based Java a
 
 ### Components to wire:
 
-#### Domain Object as Java Bean
+#### Validate Domain Object as Java Bean
  * Create every bean in your project as a subclass of AbstractValidationBean
  * Override the validate() method 
  * Specify validation rule and validate each field that need to be validated
@@ -34,3 +34,9 @@ This is a Java Validation, Binding and Formatting framework for web based Java a
  * Create a class XXXError extends BeanError to represent customized error
  * Add a new instance of XXXError to error Set for each error happened in your project
  
+#### Auto bind Java Bean properties with Form data
+ * Create a Binder class for each bean which need to be binded with form data
+ * Make the Binder class a subclass of AbstractBeanBinder
+ * Override preBind() method to put pre bind logic like populate bean with default values from data source
+ * Override buildParameterMap() method to build parameter map, or get it from HTTP request for auto binding
+ * Override postBind() method to put customized post bind process logic
