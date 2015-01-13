@@ -26,3 +26,11 @@ This is a Java Validation, Binding and Formatting framework for web based Java a
  * Create every bean in your project as a subclass of AbstractValidationBean
  * Override the validate() method 
  * Specify validation rule and validate each field that need to be validated
+
+#### Dealing with errors
+ * AbstractValidationBean defined a Set of BeanError and a Map of FieldError
+ * The framework will populate the Set and Map with validation errors
+ * Create an Enum XXXErrorCode implements ErrorMessage interface to categorize error message in your project
+ * Create a class XXXError extends BeanError to represent customized error
+ * Add a new instance of XXXError to error Set for each error happened in your project
+ 
