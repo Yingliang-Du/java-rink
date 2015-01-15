@@ -18,18 +18,22 @@
 package com.ylw.enterprise.validation.binder;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.ObjectArrays;
+import com.google.common.collect.Sets;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
 import com.ylw.enterprise.validation.error.FieldError;
 
 /**
- * 
+ *
  * This class is designed for binding form domain object (POJO) from web form. The bind() method will do the automatic
  * binding base on parameters match to the bean. For each form domain object in your project, you need to create a
  * binder extends this class. You need to override the following methods to add customized binding logic:
@@ -43,27 +47,27 @@ import com.ylw.enterprise.validation.error.FieldError;
  */
 public abstract class AbstractBeanBinder {
 	private static final Logger LOGGER = Logger.getLogger(AbstractBeanBinder.class);
-	
+
 	/**
 	 * Override and put your binding logic
 	 * @param bean
 	 * @param parameterObject
 	 */
 //	public abstract void bindToBean(@Nonnull AbstractValidationBean bean, @Nonnull Object parameterObject);
-//	
+//
 //	protected void bindToField(AbstractValidationBean bean, String fieldName, String stringValue) {
 //		FieldBinder.bindToField(bean, fieldName, stringValue);
 //	}
-	
+
 	/**
 	 * Binding HTTP request form parameters to the bean fields, record errors if not succeed.
-	 * 
+	 *
 	 * @param parameterMap - parameter map from web request
 	 * @return this instance
 	 */
 	private AbstractValidationBean bind(AbstractValidationBean bean, @Nonnull Map<String, String[]> parameterMap) {
 		FieldError error;
-		// get all fields of this bean
+		// Get all fields of this bean
 		Class<?> clazz = bean.getClass();
 		Field[] fields = clazz.getDeclaredFields();
 		fields = getFields(clazz, fields);
@@ -80,11 +84,11 @@ public abstract class AbstractBeanBinder {
 				}
 			}
 		}
-		
+
 		// return this bean
 		return bean;
 	}
-	
+
 	/**
 	 * Get all fields of object hierarchy - sub class of AbstractValidationBean
 	 */
@@ -101,14 +105,14 @@ public abstract class AbstractBeanBinder {
 			return getFields(clazz, fields);
 		}
 	}
-	
+
 	/**
 	 * Call from bean to bind all fields
 	 * @param bean
 	 * @return populated bean
 	 */
 	public AbstractValidationBean bind() {
-	
+
 		// Pre bind process - get bean instance populated with default value
 		AbstractValidationBean bindBean = preBind();
 		// Build request parameters map
@@ -117,26 +121,51 @@ public abstract class AbstractBeanBinder {
 		bindBean = bind(bindBean, parameterMap);
 		// Return the binded bean after post bind process
 		return postBind(bindBean);
-		
+
 	}
-	
+
 	/**
-	 * Override this method to put pre bind logic like populate bean with 
-	 * default values from data source... 
-	 * @return Pre populated bean
+	 * Override this method to put pre bind logic like populate bean with
+	 * default values from data source...
+	 * @return Pre Populated bean
 	 */
 	protected abstract AbstractValidationBean preBind();
-	
+
 	/**
 	 * Override this method to build parameter map, or get it from HTTP request
 	 * @return parameter map
 	 */
 	protected abstract Map<String, String[]> buildParameterMap();
-	
+
 	/**
 	 * Override this method to put customized post bind process logic
 	 * @param bean need to be processed
 	 * @return binded bean
 	 */
 	protected abstract AbstractValidationBean postBind(AbstractValidationBean bean);
+
+	protected Map<String, String[]> convertParameterMapWithDotNameToMatchBeanProperty(Map<String, String[]> parameterMap, String beanName) {
+		// MAP keys (something.propertyName) match bean's properties name (propertyName)
+//		Map<String, String[]> parameterMap2 = new HashMap<String, String[]>();
+		LOGGER.info("Parameter map before convert -> " + parameterMap);
+		// Get key set of given parameter map - make copy to avoid ConcurrentModificationException
+		Set<String> keys = Sets.newHashSet(parameterMap.keySet());
+		Pattern KEYP = Pattern.compile(".*" + beanName + "\\..*");
+		// Get the last token of a string delimited by something like "."
+		StringBuffer buff;
+		String propertyName;
+		for (String key : keys) {
+			buff = new StringBuffer(key);
+			propertyName = buff.substring(buff.lastIndexOf(".") + 1);
+			if (KEYP.matcher(key).matches()) {
+				// Add matching property to the map
+				parameterMap.put(propertyName, parameterMap.get(key));
+			}
+		}
+		// Log parameter map info
+		LOGGER.info("Converted parameter map -> " + parameterMap);
+
+		// Return converted MAP
+		return parameterMap;
+	}
 }

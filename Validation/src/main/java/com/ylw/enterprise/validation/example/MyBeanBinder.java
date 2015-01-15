@@ -24,7 +24,7 @@ import com.ylw.enterprise.validation.binder.AbstractBeanBinder;
 
 public class MyBeanBinder extends AbstractBeanBinder {
 	private Map<String, String[]> parameterMap;
-	
+
 	public MyBeanBinder(Map<String, String[]> parameterMap) {
 		this.parameterMap = parameterMap;
 	}
@@ -38,13 +38,13 @@ public class MyBeanBinder extends AbstractBeanBinder {
 		return MyBean.Builder.defaultValues().build();
 	}
 
-	/* 
+	/*
 	 * @see com.ylw.enterprise.validation.binder.AbstractBeanBinder#buildParameterMap()
 	 */
 	@Override
 	protected Map<String, String[]> buildParameterMap() {
-		// Return HTTP request parameter map
-		return parameterMap;
+		// Return converted HTTP request parameter map
+		return convertParameterMapWithDotNameToMatchBeanProperty(parameterMap, "myBean");
 	}
 
 	/* (non-Javadoc)
