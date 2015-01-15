@@ -148,9 +148,27 @@ public class FieldValidator {
 				return FieldErrorCode.FIELD_MIN;
 			}
 		}
-
-		LOGGER.warn("The validation logic for field type -" + fieldValue.getClass().getName()
+		
+		// Validate Number field
+		if (fieldValue instanceof Number) {
+			Number numberValue = (Number) fieldValue;
+			Number numberMinValue;
+			if (minValue instanceof Number) {
+				numberMinValue = (Number) minValue;
+			}
+			else {
+				LOGGER.error("The min rule specified -" + minValue + "- does not apply to Number field");
+				return null;
+			}
+			// report rule violation
+			if (numberMinValue.intValue() > numberValue.intValue()) {
+				return FieldErrorCode.FIELD_MIN;
+			}
+		}
+		else {
+			LOGGER.warn("The validation logic for field type -" + fieldValue.getClass().getName()
 				+ "- had not been implemented yet");
+		}
 		return null;
 	}
 	
