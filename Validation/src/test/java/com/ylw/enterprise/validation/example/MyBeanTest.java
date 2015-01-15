@@ -43,8 +43,20 @@ public class MyBeanTest {
 
 	@Before
 	public void initInstance() {
-		// Create myBean instance
-		myBean = new MyBean();
+		// Create myBean instance and populate initial state of the bean
+		myBean = MyBean.Builder.defaultValues()
+				.withIntField(7)
+				.withIntegerField(7)
+				.withCreditCard("4111111111111111")
+				.withEmail("email")
+				.withStringField("stringField")
+				.withUrl("url")
+				.build();
+		
+		// Validate initial state of the bean
+		myBean.clearErrors().validate();
+		LOGGER.info("Initial state errors in myBean -> " + myBean.getErrors());
+		assertFalse("There should be no error to start with", myBean.hasError());
 	}
 
 	@Test
@@ -90,14 +102,6 @@ public class MyBeanTest {
 
 	@Test
 	public void testValidateDate() throws ParseException {
-		// Initial state of the bean
-		myBean.setStringField("Tested");
-		myBean.setIntField(7);
-		myBean.setEmail("email");
-		myBean.clearErrors().validate();
-		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
-		assertFalse("There should be no error to start with", myBean.hasError());
-
 		// Validate non-valid Date
 		SimpleDateFormat sdf = new SimpleDateFormat(myBean.getDateFormat());
 		myBean.setExpirDate(sdf.parse("10/30/2014"));
@@ -111,6 +115,33 @@ public class MyBeanTest {
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
 		assertFalse("There should be no error whothout min date violation", myBean.hasError());
 	}
+	
+	@Test
+	public void testValidateCreditCard() {
+		// test invalid credit card
+		myBean.setCreditCardNumber("InvalidCreditCardNumber");
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertTrue("The credit card number is invalid", myBean.hasError());		
+	}
+	
+	@Test
+	public void testValidateIntegerRange() {
+		// test integer not in range
+		myBean.setIntegerField(8);
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertTrue("The integer is not in the given range", myBean.hasError());		
+	}
+	
+	@Test
+	public void testValidateStringRange() {
+		// test string not in range
+		myBean.setStringRange("8");
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertTrue("The string is not in the given range", myBean.hasError());		
+	}	
 
 	@Test
 	public void testBind() {

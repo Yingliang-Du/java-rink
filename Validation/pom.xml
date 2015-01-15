@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.y-l-w.enterprise</groupId>
 		<artifactId>JavaRink</artifactId>
-		<version>1.0.7</version>
+		<version>1.0.8</version>
 	</parent>
 
 	<artifactId>Validation</artifactId>

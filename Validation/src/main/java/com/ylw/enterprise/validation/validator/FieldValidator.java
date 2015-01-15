@@ -17,6 +17,7 @@
  */
 package com.ylw.enterprise.validation.validator;
 
+import java.util.Collection;
 import java.util.Date;
 
 import javax.annotation.Nonnull;
@@ -85,6 +86,11 @@ public class FieldValidator {
 		if (validationRule.isRequired() && fieldValue == null) {
 			return FieldErrorCode.FIELD_NON_NULL;
 		}
+		
+		// No need to validate if fieldValue is null and not required
+		if (fieldValue == null) {
+			return null;
+		}
 
 		// Deal with NonBlank rule for string type field
 		if (fieldValue != null && validationRule.isNonBlank()) {
@@ -125,6 +131,14 @@ public class FieldValidator {
 		if (fieldValue != null && validationRule.isCreditCard()) {
 			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
 			return validateCreditCard(fieldValue);
+		}
+		
+		// Validate in rule
+		Collection<?> in = validationRule.getIn(); 
+		if (in != null) {
+			if (!in.contains(fieldValue)) {
+				return FieldErrorCode.FIELD_IN;
+			}
 		}
 
 		// Return null if there is no rule violated

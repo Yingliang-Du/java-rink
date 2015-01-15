@@ -37,6 +37,8 @@ public enum FieldErrorCode implements ErrorMessage {
 	FIELD_POSITIVE_NUMBER("FieldPositiveNumber", "field should be a positive number."),
 
 	FIELD_MIN("FieldMin", "field should be greater than the minimum allowed"),
+	
+	FIELD_IN("FieldIn", "field is not in the range"),
 
 	//-----Field Binding Error Message-----
 	NON_INTEGER("NonInteger", "field should be an Integer."),

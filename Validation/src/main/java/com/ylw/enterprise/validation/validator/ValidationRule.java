@@ -17,6 +17,8 @@
  */
 package com.ylw.enterprise.validation.validator;
 
+import java.util.Collection;
+
 public class ValidationRule {
 	private boolean creditCard;
 	private boolean email;
@@ -27,6 +29,7 @@ public class ValidationRule {
 	private boolean url;
 	private Object min;
 	private Object max;
+	private Collection<?> in; 
 
 	public boolean isCreditCard() {
 		return creditCard;
@@ -100,6 +103,14 @@ public class ValidationRule {
 		this.max = max;
 	}
 
+	public Collection<?> getIn() {
+		return in;
+	}
+
+	public void setIn(Collection<?> in) {
+		this.in = in;
+	}
+
 	/** ------------------Builder Pattern-------------------- */
 	public static class Builder {
 		private ValidationRule rule;
@@ -154,6 +165,11 @@ public class ValidationRule {
 
 		public Builder withMax(Object max) {
 			rule.setMax(max);
+			return this;
+		}
+		
+		public Builder withIn(Collection<?> in) {
+			rule.setIn(in);
 			return this;
 		}
 

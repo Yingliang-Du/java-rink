@@ -18,12 +18,15 @@
 package com.ylw.enterprise.validation.example;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.pojomatic.annotations.AutoProperty;
 
+import com.google.common.collect.ImmutableSet;
 import com.ylw.enterprise.validation.bean.AbstractPojomaticBean;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
 import com.ylw.enterprise.validation.error.FieldError;
@@ -33,6 +36,7 @@ public class MyBean extends AbstractPojomaticBean {
 	private static final Logger LOGGER = Logger.getLogger(MyBean.class);
 
 	private String stringField;
+	private String stringRange;
 	private int intField;
 	private Integer integerField;
 	private Date expirDate;
@@ -46,6 +50,14 @@ public class MyBean extends AbstractPojomaticBean {
 
 	public void setStringField(String stringField) {
 		this.stringField = stringField;
+	}
+
+	public String getStringRange() {
+		return stringRange;
+	}
+
+	public void setStringRange(String stringRange) {
+		this.stringRange = stringRange;
 	}
 
 	public int getIntField() {
@@ -130,6 +142,11 @@ public class MyBean extends AbstractPojomaticBean {
 			myBean.setStringField(stringField);
 			return this;
 		}
+		
+		public Builder withStringRange(String stringRange) {
+			myBean.setStringRange(stringRange);
+			return this;
+		}
 
 		public Builder withIntField(int intField) {
 			myBean.setIntField(intField);
@@ -165,11 +182,19 @@ public class MyBean extends AbstractPojomaticBean {
 	 */
 	@Override
 	public MyBean validate() {
+		Collection<?> range;
 		// Specify validation rule and validate each field that need to be validated
 		validate("stringField", stringField, onRule().withRequired(true).withNonBlank(true).build());
+		range = ImmutableSet.of("5", "7", "9");
+		validate("stringRange", stringRange, onRule().withIn(range).build(), 
+				"stringRange " + stringRange + " is not in range: " + Arrays.toString(range.toArray()));
 		validate("intField", intField, onRule().withPositiveNumber(true).build());
+		validate("integerField", integerField, onRule().withIn(ImmutableSet.of(5, 7, 9)).build(),
+				"integerField " + integerField + " is not in range: " + Arrays.toString(range.toArray()));
 		validate("expirDate", expirDate, onRule().withMin(new Date()).build(), MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
 		validate("email", email, onRule().withRequired(true).build(), "Customized error message for email field");
+		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(), 
+				"Credit card number -" + creditCardNumber + "- is not valid");
 		// Return this bean
 		return this;
 	}
