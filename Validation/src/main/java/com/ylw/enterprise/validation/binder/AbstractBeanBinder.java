@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
@@ -146,10 +147,11 @@ public abstract class AbstractBeanBinder {
 
 	protected Map<String, String[]> convertParameterMapWithDotNameToMatchBeanProperty(Map<String, String[]> parameterMap, String beanName) {
 		// MAP keys (something.propertyName) match bean's properties name (propertyName)
-//		Map<String, String[]> parameterMap2 = new HashMap<String, String[]>();
+		// Make a copy of parameter map and modify - parameterMap is locked
+		Map<String, String[]> parameterMap2 = Maps.newHashMap(parameterMap);
 		LOGGER.info("Parameter map before convert -> " + parameterMap);
-		// Get key set of given parameter map - make copy to avoid ConcurrentModificationException
-		Set<String> keys = Sets.newHashSet(parameterMap.keySet());
+		// Get key set of given parameter map - use parameterMap to avoid ConcurrentModificationException
+		Set<String> keys = parameterMap.keySet();
 		Pattern KEYP = Pattern.compile(".*" + beanName + "\\..*");
 		// Get the last token of a string delimited by something like "."
 		StringBuffer buff;
@@ -159,13 +161,13 @@ public abstract class AbstractBeanBinder {
 			propertyName = buff.substring(buff.lastIndexOf(".") + 1);
 			if (KEYP.matcher(key).matches()) {
 				// Add matching property to the map
-				parameterMap.put(propertyName, parameterMap.get(key));
+				parameterMap2.put(propertyName, parameterMap.get(key));
 			}
 		}
 		// Log parameter map info
-		LOGGER.info("Converted parameter map -> " + parameterMap);
+		LOGGER.info("Converted parameter map -> " + parameterMap2);
 
 		// Return converted MAP
-		return parameterMap;
+		return parameterMap2;
 	}
 }
