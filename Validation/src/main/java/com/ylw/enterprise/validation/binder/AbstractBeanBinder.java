@@ -145,13 +145,20 @@ public abstract class AbstractBeanBinder {
 	 */
 	protected abstract AbstractValidationBean postBind(AbstractValidationBean bean);
 
-	protected Map<String, String[]> convertParameterMapWithDotNameToMatchBeanProperty(Map<String, String[]> parameterMap, String beanName) {
+	/**
+	 * Convert parameter map with name space key to match bean property name
+	 * @param parameterMap
+	 * @param beanName
+	 * @return
+	 */
+	protected Map<String, String[]> convertParameterMapWithNSToMatchBeanProperty(Map<String, String[]> parameterMap, String beanName) {
 		// MAP keys (something.propertyName) match bean's properties name (propertyName)
 		// Make a copy of parameter map and modify - parameterMap is locked
 		Map<String, String[]> parameterMap2 = Maps.newHashMap(parameterMap);
 		LOGGER.info("Parameter map before convert -> " + parameterMap);
 		// Get key set of given parameter map - use parameterMap to avoid ConcurrentModificationException
 		Set<String> keys = parameterMap.keySet();
+		// match {beanName}. pattern to find parameters for given bean
 		Pattern KEYP = Pattern.compile(".*" + beanName + "\\..*");
 		// Get the last token of a string delimited by something like "."
 		StringBuffer buff;
