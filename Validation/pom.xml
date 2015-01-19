@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.y-l-w.enterprise</groupId>
 		<artifactId>JavaRink</artifactId>
-		<version>1.0.9</version>
+		<version>1.0.10</version>
 	</parent>
 
 	<artifactId>Validation</artifactId>
@@ -23,31 +23,24 @@
 			<groupId>javax.xml</groupId>
 			<artifactId>jaxb-api</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
 	</dependencies>
-	
-	<!-- <distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement> -->
+
+	<!-- <distributionManagement> <snapshotRepository> <id>ossrh</id> <url>https://oss.sonatype.org/content/repositories/snapshots</url> 
+		</snapshotRepository> </distributionManagement> -->
 
 	<build>
 		<plugins>
-		<!--  
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.3</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
-		-->	
+			<!-- <plugin> <groupId>org.sonatype.plugins</groupId> <artifactId>nexus-staging-maven-plugin</artifactId> 
+				<version>1.6.3</version> <extensions>true</extensions> <configuration> <serverId>ossrh</serverId> 
+				<nexusUrl>https://oss.sonatype.org/</nexusUrl> <autoReleaseAfterClose>true</autoReleaseAfterClose> 
+				</configuration> </plugin> -->
 		</plugins>
-	</build> 
-	
+	</build>
+
 </project>

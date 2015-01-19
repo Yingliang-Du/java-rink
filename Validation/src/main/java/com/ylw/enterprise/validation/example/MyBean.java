@@ -35,6 +35,22 @@ import com.ylw.enterprise.validation.error.FieldError;
 public class MyBean extends AbstractPojomaticBean {
 	private static final Logger LOGGER = Logger.getLogger(MyBean.class);
 
+	/**
+	 * Default constructor
+	 */
+	public MyBean() {
+	}
+	
+	/**
+	 * Construct bean for web form
+	 */
+	public MyBean(String beanName) {
+		// Specify form bean name and build form key map
+		this.setBeanName(beanName);
+		this.buildFormKey();
+	}
+	
+	/* ------------------Properties------------------ */
 	private String stringField;
 	private String stringRange;
 	private int intField;
@@ -43,7 +59,9 @@ public class MyBean extends AbstractPojomaticBean {
 	private String creditCardNumber;
 	private String email;
 	private String url;
+	private String builder;	// can i have the same name as the nested class
 
+	/* ------------------Getting/Setting------------------- */
 	public String getStringField() {
 		return stringField;
 	}
@@ -108,7 +126,15 @@ public class MyBean extends AbstractPojomaticBean {
 		this.url = url;
 	}
 	
-	/** -----------------Utilities------------------- */
+	public String getBuilder() {
+		return builder;
+	}
+
+	public void setBuilder(String builder) {
+		this.builder = builder;
+	}
+
+	/* -----------------Utilities------------------- */
 	public String getExpirDateAsText() {
 		if (expirDate != null) {
 			// format date
@@ -122,18 +148,34 @@ public class MyBean extends AbstractPojomaticBean {
 	}
 	
 
-	/** ------------------Builder--------------------- */
+	/* ------------------Builder--------------------- */
 	public static class Builder {
 		private MyBean myBean;
 
 		public Builder() {
 			this.myBean = new MyBean();
 		}
+		
+		/**
+		 * Construct builder for form bean
+		 * @param beanName
+		 */
+		public Builder(String beanName) {
+			this.myBean = new MyBean(beanName);
+		}
 
 		public static Builder defaultValues() {
 			return new Builder();
 		}
+		
+		public static Builder formKeyValues(String beanName) {
+			return new Builder(beanName);
+		}
 
+		/**
+		 * Build the bean instance
+		 * @return bean instance
+		 */
 		public MyBean build() {
 			return myBean;
 		}
@@ -174,8 +216,18 @@ public class MyBean extends AbstractPojomaticBean {
 		}
 
 	}
+	
+	/* -------------------Binding------------------- */
+	/**
+	 * Define form key will be used in the form and data binding logic
+	 *
+	 */
+	public static class FormKey {
+		public static final String builder = "form_key_builder";
+		public static final String stringField = "customized_form_key_stringField";
+	}
 
-	/** ------------------Validation-------------------- */
+	/* ------------------Validation-------------------- */
 
 	/**
 	 * Validate on fields need to be validated

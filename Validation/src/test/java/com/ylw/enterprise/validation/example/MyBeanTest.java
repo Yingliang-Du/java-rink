@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -141,7 +142,36 @@ public class MyBeanTest {
 		myBean.clearErrors().validate();
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
 		assertTrue("The string is not in the given range", myBean.hasError());		
-	}	
+	}
+	
+	@Test
+	public void testToJson() {
+		myBean.toJson();
+	}
+	
+	@Test
+	public void testBuildFormKey() {
+		myBean.buildFormKey();
+	}
+	
+	@Test
+	public void testTreeMap() {
+		// Creating tree map 
+//      TreeMap<Integer, String> treemap = new TreeMap<Integer, String>();
+		HashMap<Integer, String> treemap = new HashMap<Integer, String>();
+      
+      // Populating tree map
+      treemap.put(2, "two");
+      treemap.put(1, "one");
+      treemap.put(3, "three");
+      treemap.put(6, "six");
+      treemap.put(5, "five");   
+      
+      // Putting value at key 3
+      System.out.println("Value before modification: "+ treemap);            
+      System.out.println("Value returned: "+ treemap.put(3,"TP"));      
+      System.out.println("Value after modification: "+ treemap);
+	}
 
 	@Test
 	public void testBind() {

@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
@@ -48,6 +49,8 @@ import com.ylw.enterprise.validation.error.FieldError;
  */
 public abstract class AbstractBeanBinder {
 	private static final Logger LOGGER = Logger.getLogger(AbstractBeanBinder.class);
+	
+	private AbstractValidationBean bean;
 
 	/**
 	 * Override and put your binding logic
@@ -66,7 +69,9 @@ public abstract class AbstractBeanBinder {
 	 * @param parameterMap - parameter map from web request
 	 * @return this instance
 	 */
-	private AbstractValidationBean bind(AbstractValidationBean bean, @Nonnull Map<String, String[]> parameterMap) {
+	private void bind(@Nonnull Map<String, String[]> parameterMap) {
+		// bean property must be populated at this point
+		Preconditions.checkNotNull("bean property must be populated at this point", bean);
 		FieldError error;
 		// Get all fields of this bean
 		Class<?> clazz = bean.getClass();
@@ -85,9 +90,6 @@ public abstract class AbstractBeanBinder {
 				}
 			}
 		}
-
-		// return this bean
-		return bean;
 	}
 
 	/**
@@ -109,19 +111,19 @@ public abstract class AbstractBeanBinder {
 
 	/**
 	 * Call from bean to bind all fields
-	 * @param bean
+	 * This method will create and bind bean instance
 	 * @return populated bean
 	 */
 	public AbstractValidationBean bind() {
 
-		// Pre bind process - get bean instance populated with default value
-		AbstractValidationBean bindBean = preBind();
+		// Pre bind process - create bean instance and populate it with default value
+		bean = preBind();
 		// Build request parameters map
 		Map<String, String[]> parameterMap = buildParameterMap();
-		// Bind fields
-		bindBean = bind(bindBean, parameterMap);
+		// Bind fields in the bean
+		bind(parameterMap);
 		// Return the binded bean after post bind process
-		return postBind(bindBean);
+		return postBind(bean);
 
 	}
 
@@ -146,12 +148,18 @@ public abstract class AbstractBeanBinder {
 	protected abstract AbstractValidationBean postBind(AbstractValidationBean bean);
 
 	/**
-	 * Convert parameter map with name space key to match bean property name
+	 * The format of parameter map keys is {BeanName}.{FieldName} by default. 
+	 * The keys also could be customized by FormKey class.
+	 * 
+	 * This method build field/value pair for the given bean. 
+	 * 
 	 * @param parameterMap
 	 * @param beanName
-	 * @return
+	 * @return converted parameter map
 	 */
-	protected Map<String, String[]> convertParameterMapWithNSToMatchBeanProperty(Map<String, String[]> parameterMap, String beanName) {
+	protected Map<String, String[]> populateThisBeanToParameterMap(Map<String, String[]> parameterMap) {
+		// bean property must be populated at this point
+		Preconditions.checkNotNull("bean property must be populated at this point", bean);
 		// MAP keys (something.propertyName) match bean's properties name (propertyName)
 		// Make a copy of parameter map and modify - parameterMap is locked
 		Map<String, String[]> parameterMap2 = Maps.newHashMap(parameterMap);
@@ -159,20 +167,43 @@ public abstract class AbstractBeanBinder {
 		// Get key set of given parameter map - use parameterMap to avoid ConcurrentModificationException
 		Set<String> keys = parameterMap.keySet();
 		// match {beanName}. pattern to find parameters for given bean
-		Pattern KEYP = Pattern.compile(".*" + beanName + "\\..*");
+		Pattern KEYP = Pattern.compile(".*" + bean.getClass().getSimpleName() + "\\..*");
 		// Get the last token of a string delimited by something like "."
 		StringBuffer buff;
 		String propertyName;
 		for (String key : keys) {
+			// Deal with default keys
 			buff = new StringBuffer(key);
 			propertyName = buff.substring(buff.lastIndexOf(".") + 1);
 			if (KEYP.matcher(key).matches()) {
 				// Add matching property to the map
 				parameterMap2.put(propertyName, parameterMap.get(key));
 			}
+			// Deal with customized key
+			else {
+				Class<?> formKeyClass = bean.getFormKeyClass();
+				if (formKeyClass != null) {
+					// Get all fields defined in FormKey class
+					Field[] fields = formKeyClass.getFields();
+					for (int i=0; i<fields.length; i++) {
+						Field field = fields[i];
+						try {
+							if (field.get(bean).equals(key)) {
+								// Add matched key to parameter map
+								parameterMap2.put(field.getName(), parameterMap.get(key));
+							}
+						}
+						catch (IllegalArgumentException | IllegalAccessException e) {
+							// Error happened when retrieve key from FormKey
+							LOGGER.info("Error happened when retrieve key from FormKey");
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 		}
 		// Log parameter map info
-		LOGGER.info("Converted parameter map -> " + parameterMap2);
+		LOGGER.info(bean.getClass().getSimpleName() + " Converted parameter map -> " + parameterMap2);
 
 		// Return converted MAP
 		return parameterMap2;

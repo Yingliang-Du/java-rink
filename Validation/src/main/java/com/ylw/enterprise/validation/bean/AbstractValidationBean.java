@@ -38,9 +38,9 @@ import com.ylw.enterprise.validation.validator.ValidationRule;
 
 public abstract class AbstractValidationBean {
 	private static final Logger LOGGER = Logger.getLogger(AbstractValidationBean.class);
-	
-	// Field text format
-	protected String dateFormat = "MM/dd/yyyy"; 
+
+	// --------------Field text format----------------
+	protected String dateFormat = "MM/dd/yyyy";
 
 	public String getDateFormat() {
 		return dateFormat;
@@ -50,146 +50,116 @@ public abstract class AbstractValidationBean {
 		this.dateFormat = dateFormat;
 	}
 
-	// -------------------Validation---------------------
-	// A set of error messages
-	protected final Set<BeanError> errors = Sets.newHashSet();
-	private final Map<String, Set<FieldError>> fieldErrorMap = Maps.newTreeMap();
+	// --------------------Binding----------------------
+	private final Map<String, String> formKey = Maps.newTreeMap();
+	private String beanName;
 
-	/* Deal with errors */
-	public Set<BeanError> getErrors() {
-		return errors;
+	public Map<String, String> getFormKey() {
+		return formKey;
 	}
-	
-	public void addError(BeanError error) {
-		errors.add(error);
+
+	public String getBeanName() {
+		return beanName;
 	}
-	
-	/**
-	 * Construct and add error from general error message
-	 * @param message
-	 */
-	public void addError(String message) {
-		addError(new BeanError(message));
-	}
-	
-	/** See if there are errors in this object */
-	public boolean hasError() {
-		return !errors.isEmpty() || !fieldErrorMap.isEmpty();
+
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
 	}
 
 	/**
-	 * Clear both object and field errors - normally do this before bind and validate
-	 * @return this instance
+	 * The default form key beanName.fieldName
+	 * beanName can be set or use class name if not
 	 */
-	public AbstractValidationBean clearErrors() {
-		// Clear object errors
-		errors.clear();
-		// Clear field errors
-		fieldErrorMap.clear();
-		// return this bean
-		return this;
+	private void buildDefaultFormKey() {
+		// beanName - use class name if not set
+		if (beanName == null) {
+			beanName = this.getClass().getSimpleName();
+		}
+		// Get all fields of this bean
+		Field[] fields = this.getClass().getDeclaredFields();
+		// Build default form key map for each field in this bean
+		for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			String fieldName = field.getName();
+			// Add the field form key to form key map
+			formKey.put(fieldName, beanName + "." + fieldName);
+		}
+		LOGGER.info(this.getClass().getSimpleName() + " default form key map: " + formKey);
 	}
-		
-	/* Deal with field errors */
-	public Map<String, Set<FieldError>> getFieldErrorMap() {
-		return fieldErrorMap;
-	}
-		
+
 	/**
-	 * @return Validation Rule Builder
+	 * Build Form Key Map
 	 */
-	protected ValidationRule.Builder onRule() {
-		return ValidationRule.Builder.defaultValues();
-	}
-	
-	/**
-	 * Override this method to specify validation rule for each field in the object and validate.
-	 */
-	public abstract AbstractValidationBean validate();
-	
-	/**
-	 * Validate the field base on the validation rule with customized error message
-	 * @param fieldName
-	 * @param fieldValue
-	 * @param validationRule
-	 * @param errorMessage - customized error message
-	 */
-	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, String errorMessage) {
-		validate(validationRule, fieldName, fieldValue, errorMessage);		 
-	}
-	
-	/**
-	 * Validate the field base on the validation rule with customized error message code
-	 * @param fieldName
-	 * @param fieldValue
-	 * @param validationRule
-	 * @param message - customized error code
-	 */
-	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, ErrorMessage message) {
-		validate(validationRule, fieldName, fieldValue, message);		 
-	}
-	
-	/**
-	 * Validate the field base on the validation rule
-	 * @param fieldName
-	 * @param fieldValue
-	 * @param validationRule
-	 */
-	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule) {
-		validate(validationRule, fieldName, fieldValue, null);		
-	}
-	
-	/*
-	 * Validate field value base on validation rule
-	 * Create error base on error code or customized error
-	 */
-	private void validate(ValidationRule validationRule, String fieldName, Object fieldValue, Object customError) {
-		// Validate
-		FieldValidator validator = new FieldValidator(validationRule);
-		FieldErrorCode fieldErrorCode = validator.validate(fieldValue);
-		// Deal with violated rules and add field error to errors if any
-		if (fieldErrorCode != null) {
-			// There is error - build error object 
-			FieldError error = new FieldError(fieldName, fieldErrorCode);
-			if (customError == null) {
-				// build error object base on error code
-				error = new FieldError(fieldName, fieldErrorCode);
-			}
-			else {
-				if (customError instanceof ErrorMessage) {
-					error = new FieldError(fieldName, ((ErrorMessage) customError).getMessage());
+	public void buildFormKey() {
+		// Build default form key map
+		buildDefaultFormKey();
+		// Customize base on form keys defined in FormKey class
+		Class<?> formKeyClass = getFormKeyClass();
+		if (formKeyClass != null) {
+			// If form key class defined
+			Field[] fields = formKeyClass.getDeclaredFields();
+			// Get value for form key of each field and put them in to form key map
+			String key = null;
+			for (int i = 0; i < fields.length; i++) {
+				Field field = fields[i];
+				try {
+					key = (String) field.get(this);
 				}
-				else if (customError instanceof String) {
-					error = new FieldError(fieldName, (String) customError);
+				catch (IllegalArgumentException | IllegalAccessException | ClassCastException e) {
+					// Error happened when retrieve key from FormKey
+					LOGGER.info("Error happened when retrieve key from FormKey");
+					e.printStackTrace();
 				}
-				else {
-					LOGGER.warn("Unricegnized customized message -> " + customError);
+				// Put the form key into the map
+				if (key != null) {
+					formKey.put(field.getName(), key);
 				}
 			}
-			// Add field error
-			addFieldError(fieldName, error);
 		}
+		LOGGER.info(this.getClass().getSimpleName() + " Form Key Map: " + formKey);
 	}
-	
-	/*
-	 * Add field error to error set and field error map
+
+	/**
+	 * Check if the FormKey nested class declared in the sub class. FormKey class is where the customized form key for
+	 * each field defined. Form keys in this class will be used in the form and data binding logic.
+	 * 
+	 * @return true - if the class is declared; false - if not
 	 */
-	private void addFieldError(String fieldName, FieldError error) {
-		
-		// Add error to the object error set
-		errors.add(error);
-		// add to the field error map
-		Set<FieldError> fieldErrors = fieldErrorMap.get(fieldName);
-		if (fieldErrors == null) {
-			fieldErrors = Sets.newHashSet();
+	private boolean isFormKeyClassDefined() {
+		Class<?> cl = getClass();
+		// Loop through all declared class and see if the FormKey class defined
+		for (Class<?> innerClass : cl.getDeclaredClasses()) {
+			if (innerClass.getSimpleName().equals("FormKey")) {
+				return true;
+			}
+			LOGGER.info(innerClass.getCanonicalName());
 		}
-		fieldErrors.add(error);
-		fieldErrorMap.put(fieldName, fieldErrors);
+		return false;
 	}
-	
+
+	/**
+	 * Get FormKey class if it is defined in the sub class
+	 */
+	public Class<?> getFormKeyClass() {
+		// Get class of this bean
+		Class<?> thisClass = this.getClass();
+		// Loop through all declared class and get the FormKey class defined
+		for (Class<?> innerClass : thisClass.getDeclaredClasses()) {
+			if (innerClass.getSimpleName().equals("FormKey")) {
+				// Return FormKey class if defined
+				return innerClass;
+			}
+			LOGGER.info(innerClass.getCanonicalName());
+		}
+		// Return null if FormKey class not defined
+		return null;
+	}
+
 	/**
 	 * Bind this bean from HTTP request form parameters
-	 * @param parameterMap - parameter map from web request
+	 * 
+	 * @param parameterMap
+	 *           - parameter map from web request
 	 * @return this instance
 	 */
 	public AbstractValidationBean bind(@Nonnull Map<String, String[]> parameterMap) {
@@ -197,7 +167,7 @@ public abstract class AbstractValidationBean {
 		// get all fields of this bean
 		Field[] fields = this.getClass().getDeclaredFields();
 		// bind parameter to each matching field
-		for (int i=0; i<fields.length; i++) {
+		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
 			String[] stringValues = parameterMap.get(field.getName());
 			if (stringValues != null) {
@@ -209,14 +179,158 @@ public abstract class AbstractValidationBean {
 				}
 			}
 		}
-		
+
 		// return this bean
 		return this;
 	}
-	
+
 	public AbstractValidationBean bind(@Nonnull AbstractBeanBinder binder) {
 		// return the binded bean
 		return binder.bind();
+	}
+
+	// -------------------Validation---------------------
+	// A set of error messages
+	protected final Set<BeanError> errors = Sets.newHashSet();
+	private final Map<String, Set<FieldError>> fieldErrorMap = Maps.newTreeMap();
+
+	/* Deal with errors */
+	public Set<BeanError> getErrors() {
+		return errors;
+	}
+
+	public void addError(BeanError error) {
+		errors.add(error);
+	}
+
+	/**
+	 * Construct and add error from general error message
+	 * 
+	 * @param message
+	 */
+	public void addError(String message) {
+		addError(new BeanError(message));
+	}
+
+	/** See if there are errors in this object */
+	public boolean hasError() {
+		return !errors.isEmpty() || !fieldErrorMap.isEmpty();
+	}
+
+	/**
+	 * Clear both object and field errors - normally do this before bind and validate
+	 * 
+	 * @return this instance
+	 */
+	public AbstractValidationBean clearErrors() {
+		// Clear object errors
+		errors.clear();
+		// Clear field errors
+		fieldErrorMap.clear();
+		// return this bean
+		return this;
+	}
+
+	/* Deal with field errors */
+	public Map<String, Set<FieldError>> getFieldErrorMap() {
+		return fieldErrorMap;
+	}
+
+	/**
+	 * @return Validation Rule Builder
+	 */
+	protected ValidationRule.Builder onRule() {
+		return ValidationRule.Builder.defaultValues();
+	}
+
+	/**
+	 * Override this method to specify validation rule for each field in the object and validate.
+	 */
+	public abstract AbstractValidationBean validate();
+
+	/**
+	 * Validate the field base on the validation rule with customized error message
+	 * 
+	 * @param fieldName
+	 * @param fieldValue
+	 * @param validationRule
+	 * @param errorMessage
+	 *           - customized error message
+	 */
+	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, String errorMessage) {
+		validate(validationRule, fieldName, fieldValue, errorMessage);
+	}
+
+	/**
+	 * Validate the field base on the validation rule with customized error message code
+	 * 
+	 * @param fieldName
+	 * @param fieldValue
+	 * @param validationRule
+	 * @param message
+	 *           - customized error code
+	 */
+	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, ErrorMessage message) {
+		validate(validationRule, fieldName, fieldValue, message);
+	}
+
+	/**
+	 * Validate the field base on the validation rule
+	 * 
+	 * @param fieldName
+	 * @param fieldValue
+	 * @param validationRule
+	 */
+	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule) {
+		validate(validationRule, fieldName, fieldValue, null);
+	}
+
+	/*
+	 * Validate field value base on validation rule Create error base on error code or customized error
+	 */
+	private void validate(ValidationRule validationRule, String fieldName, Object fieldValue, Object customError) {
+		// Validate
+		FieldValidator validator = new FieldValidator(validationRule);
+		FieldErrorCode fieldErrorCode = validator.validate(fieldValue);
+		// Deal with violated rules and add field error to errors if any
+		if (fieldErrorCode != null) {
+			// There is error - build error object
+			FieldError error = new FieldError(fieldName, fieldErrorCode);
+			if (customError == null) {
+				// build error object base on error code
+				error = new FieldError(fieldName, fieldErrorCode);
+			}
+			else {
+				if (customError instanceof ErrorMessage) {
+					error = new FieldError(fieldName, ((ErrorMessage) customError).getMessage());
+				}
+				else
+					if (customError instanceof String) {
+						error = new FieldError(fieldName, (String) customError);
+					}
+					else {
+						LOGGER.warn("Unricegnized customized message -> " + customError);
+					}
+			}
+			// Add field error
+			addFieldError(fieldName, error);
+		}
+	}
+
+	/*
+	 * Add field error to error set and field error map
+	 */
+	private void addFieldError(String fieldName, FieldError error) {
+
+		// Add error to the object error set
+		errors.add(error);
+		// add to the field error map
+		Set<FieldError> fieldErrors = fieldErrorMap.get(fieldName);
+		if (fieldErrors == null) {
+			fieldErrors = Sets.newHashSet();
+		}
+		fieldErrors.add(error);
+		fieldErrorMap.put(fieldName, fieldErrors);
 	}
 
 }

@@ -35,7 +35,8 @@ public class MyBeanBinder extends AbstractBeanBinder {
 	@Override
 	protected AbstractValidationBean preBind() {
 		// Populate MyBean with default values
-		return MyBean.Builder.defaultValues().build();
+//		return MyBean.Builder.defaultValues().build();
+		return MyBean.Builder.formKeyValues("myBean").build();
 	}
 
 	/*
@@ -44,7 +45,7 @@ public class MyBeanBinder extends AbstractBeanBinder {
 	@Override
 	protected Map<String, String[]> buildParameterMap() {
 		// Return converted HTTP request parameter map
-		return convertParameterMapWithDotNameToMatchBeanProperty(parameterMap, "myBean");
+		return populateThisBeanToParameterMap(parameterMap);
 	}
 
 	/* (non-Javadoc)

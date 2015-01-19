@@ -17,6 +17,10 @@
  */
 package com.ylw.enterprise.validation.bean;
 
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.pojomatic.Pojomatic;
 
 /**
@@ -27,6 +31,30 @@ import org.pojomatic.Pojomatic;
  *
  */
 public abstract class AbstractPojomaticBean extends AbstractValidationBean {
+	private static final Logger LOGGER = Logger.getLogger(AbstractPojomaticBean.class);
+	
+	// ---------------Convert to JSON----------------
+	public String toJson() {
+		// Place holder for converted JSON string
+		String jsonString = null;
+		// Instantiate Jackson object mapper
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			// Unformatted JSON string
+//			jsonString = mapper.writeValueAsString(this);
+			// Formatted JSON string
+			jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+		}
+		catch (IOException e) {
+			// Got exception during conversion
+			LOGGER.error("Exception happened when convert " + this.getClass().getSimpleName() + " to JSON");
+			e.printStackTrace();
+		}
+		LOGGER.info(this.getClass().getSimpleName() + ": " + jsonString);
+		// Return the JSON string
+		return jsonString;
+	}
+	
 	// ---------------Override equals, toString and hashCode--------------
 	@Override
 	public boolean equals(Object other) {
