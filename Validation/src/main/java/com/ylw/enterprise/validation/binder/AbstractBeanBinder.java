@@ -49,7 +49,7 @@ import com.ylw.enterprise.validation.error.FieldError;
  */
 public abstract class AbstractBeanBinder {
 	private static final Logger LOGGER = Logger.getLogger(AbstractBeanBinder.class);
-	
+
 	private AbstractValidationBean bean;
 
 	/**
@@ -148,43 +148,55 @@ public abstract class AbstractBeanBinder {
 	protected abstract AbstractValidationBean postBind(AbstractValidationBean bean);
 
 	/**
-	 * The format of parameter map keys is {BeanName}.{FieldName} by default. 
+	 * The format of parameter map keys is {BeanName}.{FieldName} by default.
 	 * The keys also could be customized by FormKey class.
-	 * 
-	 * This method build field/value pair for the given bean. 
-	 * 
+	 *
+	 * This method build field/value pair for the given bean.
+	 *
 	 * @param parameterMap
 	 * @param beanName
 	 * @return converted parameter map
 	 */
 	protected Map<String, String[]> populateThisBeanToParameterMap(Map<String, String[]> parameterMap) {
+		LOGGER.info("Parameter map before convert -> " + parameterMap);
 		// bean property must be populated at this point
 		Preconditions.checkNotNull("bean property must be populated at this point", bean);
 		// MAP keys (something.propertyName) match bean's properties name (propertyName)
 		// Make a copy of parameter map and modify - parameterMap is locked
 		Map<String, String[]> parameterMap2 = Maps.newHashMap(parameterMap);
-		LOGGER.info("Parameter map before convert -> " + parameterMap);
 		// Get key set of given parameter map - use parameterMap to avoid ConcurrentModificationException
 		Set<String> keys = parameterMap.keySet();
+		// Deal with default (format beanName.fieldName) keys
 		// match {beanName}. pattern to find parameters for given bean
-		Pattern KEYP = Pattern.compile(".*" + bean.getClass().getSimpleName() + "\\..*");
+		Pattern KEYP = Pattern.compile(".*" + bean.getBeanName() + "\\..*");
 		// Get the last token of a string delimited by something like "."
 		StringBuffer buff;
 		String propertyName;
+		// Deal with customized (need to be defined in FormKey nested class) key
+		Class<?> formKeyClass = bean.getFormKeyClass();
+		Field[] fields = null;
+		if (formKeyClass == null) {
+			// There is no FormKey class defined in the bean
+			LOGGER.warn("There is no nested class FormKey defined in -" + bean.getClass().getSimpleName() +
+					"- The binding framework rely on the FormKey to find the matches between bean properties " +
+					"and customized form key. If you use your own string in form keys, PLEASE DEFINE THEM IN FormKey class!");
+		}
+		else {
+			// Get all fields defined in FormKey class
+			fields = formKeyClass.getFields();
+		}
+		// build field/value pair for the given bean and add them to the map.
 		for (String key : keys) {
-			// Deal with default keys
-			buff = new StringBuffer(key);
-			propertyName = buff.substring(buff.lastIndexOf(".") + 1);
 			if (KEYP.matcher(key).matches()) {
+				// Deal with default (format beanName.fieldName) keys
+				buff = new StringBuffer(key);
+				propertyName = buff.substring(buff.lastIndexOf(".") + 1);
 				// Add matching property to the map
 				parameterMap2.put(propertyName, parameterMap.get(key));
 			}
-			// Deal with customized key
 			else {
-				Class<?> formKeyClass = bean.getFormKeyClass();
+				// Deal with customized (need to be defined in FormKey nested class) key
 				if (formKeyClass != null) {
-					// Get all fields defined in FormKey class
-					Field[] fields = formKeyClass.getFields();
 					for (int i=0; i<fields.length; i++) {
 						Field field = fields[i];
 						try {
