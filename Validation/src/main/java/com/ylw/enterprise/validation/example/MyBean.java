@@ -59,7 +59,7 @@ public class MyBean extends AbstractPojomaticBean {
 	private String creditCardNumber;
 	private String email;
 	private String url;
-	private String builder;	// can i have the same name as the nested class
+	private String builder; // can i have the same name as the nested class
 
 	/* ------------------Getting/Setting------------------- */
 	public String getStringField() {
@@ -136,17 +136,24 @@ public class MyBean extends AbstractPojomaticBean {
 
 	/* -----------------Utilities------------------- */
 	public String getExpirDateAsText() {
+		String dateString = null;
+		// Format date
 		if (expirDate != null) {
 			// format date
-			SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-			return format.format(expirDate);
+			try {
+				SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+				dateString = format.format(expirDate);
+				LOGGER.info("Formatted date -> " + dateString);
+			}
+			catch (RuntimeException ex) {
+				LOGGER.error("Thrown exception when format date: " + expirDate + " to: " + dateFormat);
+				ex.printStackTrace();
+			}
 		}
-		else {
-			// return null if date is null
-			return null;
-		}
-	}
 
+		// Return formatted date string
+		return dateString;
+	}
 
 	/* ------------------Builder--------------------- */
 	public static class Builder {
@@ -158,6 +165,7 @@ public class MyBean extends AbstractPojomaticBean {
 
 		/**
 		 * Construct builder for form bean
+		 *
 		 * @param beanName
 		 */
 		public Builder(String beanName) {
@@ -181,24 +189,27 @@ public class MyBean extends AbstractPojomaticBean {
 		}
 
 		/**
-	     * Clone the bean without formKey map and add the formKey map to it
-	     * @param beanName
-	     * @param address - bean without formKey
-	     * @return Builder with formKey build in the bean
-	     */
-	    public static Builder formKeyValues(String beanName, MyBean bean) {
-	    	return formKeyValues(beanName)
-	    			.withStringField(bean.getStringField())
-	    			.withCreditCard(bean.getCreditCardNumber())
-	    			.withEmail(bean.getEmail())
-	    			.withIntegerField(bean.getIntegerField())
-	    			.withIntField(bean.getIntField())
-	    			.withStringRange(bean.getStringRange())
-	    			.withUrl(bean.getUrl());
-	    }
+		 * Clone the bean without formKey map and add the formKey map to it
+		 *
+		 * @param beanName
+		 * @param address
+		 *            - bean without formKey
+		 * @return Builder with formKey build in the bean
+		 */
+		public static Builder formKeyValues(String beanName, MyBean bean) {
+			return formKeyValues(beanName)
+					.withStringField(bean.getStringField())
+					.withCreditCard(bean.getCreditCardNumber())
+					.withEmail(bean.getEmail())
+					.withIntegerField(bean.getIntegerField())
+					.withIntField(bean.getIntField())
+					.withStringRange(bean.getStringRange())
+					.withUrl(bean.getUrl());
+		}
 
 		/**
 		 * Build the bean instance
+		 *
 		 * @return bean instance
 		 */
 		public MyBean build() {
@@ -260,21 +271,34 @@ public class MyBean extends AbstractPojomaticBean {
 	@Override
 	public MyBean validate() {
 		Collection<?> range;
-		// Specify validation rule and validate each field that need to be validated
-		validate("stringField", stringField, onRule().withRequired(true).withNonBlank(true).build());
+		// Specify validation rule and validate each field that need to be
+		// validated
+		validate("stringField", stringField, onRule().withRequired(true)
+				.withNonBlank(true).build());
 		range = ImmutableSet.of("5", "7", "9");
-		validate("stringRange", stringRange, onRule().withIn(range).build(),
-				"stringRange " + stringRange + " is not in range: " + Arrays.toString(range.toArray()));
-		validate("intField", intField, onRule().withPositiveNumber(true).build());
-		validate("integerField", integerField, onRule().withIn(ImmutableSet.of(5, 7, 9)).build(),
-				"integerField " + integerField + " is not in range: " + Arrays.toString(range.toArray()));
-		validate("expirDate", expirDate, onRule().withMin(new Date()).build(), MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
-		validate("email", email, onRule().withRequired(true).build(), "Customized error message for email field");
-		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(),
-				"Credit card number -" + creditCardNumber + "- is not valid");
+		validate(
+				"stringRange",
+				stringRange,
+				onRule().withIn(range).build(),
+				"stringRange " + stringRange + " is not in range: "
+						+ Arrays.toString(range.toArray()));
+		validate("intField", intField, onRule().withPositiveNumber(true)
+				.build());
+		validate(
+				"integerField",
+				integerField,
+				onRule().withIn(ImmutableSet.of(5, 7, 9)).build(),
+				"integerField " + integerField + " is not in range: "
+						+ Arrays.toString(range.toArray()));
+		validate("expirDate", expirDate, onRule().withMin(new Date()).build(),
+				MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
+		validate("email", email, onRule().withRequired(true).build(),
+				"Customized error message for email field");
+		validate("creditCardNumber", creditCardNumber,
+				onRule().withCreditCard(true).build(), "Credit card number -"
+						+ creditCardNumber + "- is not valid");
 		// Return this bean
 		return this;
 	}
-
 
 }

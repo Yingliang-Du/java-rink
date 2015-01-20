@@ -45,15 +45,11 @@ public class MyBeanTest {
 	@Before
 	public void initInstance() {
 		// Create myBean instance and populate initial state of the bean
-		myBean = MyBean.Builder.defaultValues()
-				.withIntField(7)
-				.withIntegerField(7)
-				.withCreditCard("4111111111111111")
-				.withEmail("email")
-				.withStringField("stringField")
-				.withUrl("url")
-				.build();
-		
+		myBean = MyBean.Builder.defaultValues().withIntField(7)
+				.withIntegerField(7).withCreditCard("4111111111111111")
+				.withEmail("email").withStringField("stringField")
+				.withUrl("url").build();
+
 		// Validate initial state of the bean
 		myBean.clearErrors().validate();
 		LOGGER.info("Initial state errors in myBean -> " + myBean.getErrors());
@@ -108,69 +104,98 @@ public class MyBeanTest {
 		myBean.setExpirDate(sdf.parse("10/30/2014"));
 		myBean.clearErrors().validate();
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
-		assertTrue("There should be error due to min date violation", myBean.hasError());
+		assertTrue("There should be error due to min date violation",
+				myBean.hasError());
 
 		// Validate valid Date
 		myBean.setExpirDate(sdf.parse("10/30/2028"));
 		myBean.clearErrors().validate();
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
-		assertFalse("There should be no error whothout min date violation", myBean.hasError());
+		assertFalse("There should be no error whothout min date violation",
+				myBean.hasError());
 	}
-	
+
 	@Test
 	public void testValidateCreditCard() {
 		// test invalid credit card
 		myBean.setCreditCardNumber("InvalidCreditCardNumber");
 		myBean.clearErrors().validate();
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
-		assertTrue("The credit card number is invalid", myBean.hasError());		
+		assertTrue("The credit card number is invalid", myBean.hasError());
 	}
-	
+
 	@Test
 	public void testValidateIntegerRange() {
 		// test integer not in range
 		myBean.setIntegerField(8);
 		myBean.clearErrors().validate();
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
-		assertTrue("The integer is not in the given range", myBean.hasError());		
+		assertTrue("The integer is not in the given range", myBean.hasError());
 	}
-	
+
 	@Test
 	public void testValidateStringRange() {
 		// test string not in range
 		myBean.setStringRange("8");
 		myBean.clearErrors().validate();
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
-		assertTrue("The string is not in the given range", myBean.hasError());		
+		assertTrue("The string is not in the given range", myBean.hasError());
 	}
-	
+
 	@Test
 	public void testToJson() {
 		myBean.toJson();
 	}
-	
+
 	@Test
 	public void testBuildFormKey() {
 		myBean.buildFormKey();
 	}
-	
+
+	@Test
+	public void testBuilderFormKey() {
+		String beanName = "BillingAddress";
+		MyBean bean = MyBean.Builder
+				.formKeyValues(beanName)
+				.withStringField("This bean contains form key").build();
+		LOGGER.info("The bean contains formKey -> " + bean);
+		assertNotNull("The bean should not be null", bean);
+		assertFalse("The formKeys in the bean should not be empty", bean
+				.getFormKey().isEmpty());
+
+		// Test clone exist bean and add formKey map to it
+		bean = MyBean.Builder.defaultValues()
+				.withStringField("This bean need to add formKey").build();
+		LOGGER.info("Bean with no formKey -> " + bean);
+		assertNotNull("The bean should not be null", bean);
+		assertTrue("The formKeys in the bean should be empty", bean
+				.getFormKey().isEmpty());
+		// Clone and add form key map
+		bean = MyBean.Builder.formKeyValues(beanName, bean)
+				.withStringRange("The form key map had been added").build();
+		LOGGER.info("Bean with formKey added -> " + bean);
+		assertNotNull("The bean should not be null", bean);
+		assertFalse("The formKeys in the bean should not be empty", bean
+				.getFormKey().isEmpty());
+	}
+
 	@Test
 	public void testTreeMap() {
-		// Creating tree map 
-//      TreeMap<Integer, String> treemap = new TreeMap<Integer, String>();
+		// Creating tree map
+		// TreeMap<Integer, String> treemap = new TreeMap<Integer, String>();
 		HashMap<Integer, String> treemap = new HashMap<Integer, String>();
-      
-      // Populating tree map
-      treemap.put(2, "two");
-      treemap.put(1, "one");
-      treemap.put(3, "three");
-      treemap.put(6, "six");
-      treemap.put(5, "five");   
-      
-      // Putting value at key 3
-      System.out.println("Value before modification: "+ treemap);            
-      System.out.println("Value returned: "+ treemap.put(3,"TP"));      
-      System.out.println("Value after modification: "+ treemap);
+
+		// Populating tree map
+		treemap.put(2, "two");
+		treemap.put(1, "one");
+		treemap.put(3, "three");
+		treemap.put(6, "six");
+		treemap.put(5, "five");
+
+		// Putting value at key 3
+		System.out.println("Value before modification: " + treemap);
+		System.out.println("Value returned: " + treemap.put(3, "TP"));
+		System.out.println("Value after modification: " + treemap);
 	}
 
 	@Test
