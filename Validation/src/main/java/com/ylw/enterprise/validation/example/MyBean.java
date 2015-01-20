@@ -40,7 +40,7 @@ public class MyBean extends AbstractPojomaticBean {
 	 */
 	public MyBean() {
 	}
-	
+
 	/**
 	 * Construct bean for web form
 	 */
@@ -49,7 +49,7 @@ public class MyBean extends AbstractPojomaticBean {
 		this.setBeanName(beanName);
 		this.buildFormKey();
 	}
-	
+
 	/* ------------------Properties------------------ */
 	private String stringField;
 	private String stringRange;
@@ -125,7 +125,7 @@ public class MyBean extends AbstractPojomaticBean {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
+
 	public String getBuilder() {
 		return builder;
 	}
@@ -146,7 +146,7 @@ public class MyBean extends AbstractPojomaticBean {
 			return null;
 		}
 	}
-	
+
 
 	/* ------------------Builder--------------------- */
 	public static class Builder {
@@ -155,7 +155,7 @@ public class MyBean extends AbstractPojomaticBean {
 		public Builder() {
 			this.myBean = new MyBean();
 		}
-		
+
 		/**
 		 * Construct builder for form bean
 		 * @param beanName
@@ -164,13 +164,38 @@ public class MyBean extends AbstractPojomaticBean {
 			this.myBean = new MyBean(beanName);
 		}
 
+		/**
+		 *
+		 * @return Builder start with default values
+		 */
 		public static Builder defaultValues() {
 			return new Builder();
 		}
-		
+
+		/**
+		 * @param beanName
+		 * @return Builder with formKey build in this bean
+		 */
 		public static Builder formKeyValues(String beanName) {
 			return new Builder(beanName);
 		}
+
+		/**
+	     * Clone the bean without formKey map and add the formKey map to it
+	     * @param beanName
+	     * @param address - bean without formKey
+	     * @return Builder with formKey build in the bean
+	     */
+	    public static Builder formKeyValues(String beanName, MyBean bean) {
+	    	return formKeyValues(beanName)
+	    			.withStringField(bean.getStringField())
+	    			.withCreditCard(bean.getCreditCardNumber())
+	    			.withEmail(bean.getEmail())
+	    			.withIntegerField(bean.getIntegerField())
+	    			.withIntField(bean.getIntField())
+	    			.withStringRange(bean.getStringRange())
+	    			.withUrl(bean.getUrl());
+	    }
 
 		/**
 		 * Build the bean instance
@@ -184,7 +209,7 @@ public class MyBean extends AbstractPojomaticBean {
 			myBean.setStringField(stringField);
 			return this;
 		}
-		
+
 		public Builder withStringRange(String stringRange) {
 			myBean.setStringRange(stringRange);
 			return this;
@@ -216,7 +241,7 @@ public class MyBean extends AbstractPojomaticBean {
 		}
 
 	}
-	
+
 	/* -------------------Binding------------------- */
 	/**
 	 * Define form key will be used in the form and data binding logic
@@ -238,14 +263,14 @@ public class MyBean extends AbstractPojomaticBean {
 		// Specify validation rule and validate each field that need to be validated
 		validate("stringField", stringField, onRule().withRequired(true).withNonBlank(true).build());
 		range = ImmutableSet.of("5", "7", "9");
-		validate("stringRange", stringRange, onRule().withIn(range).build(), 
+		validate("stringRange", stringRange, onRule().withIn(range).build(),
 				"stringRange " + stringRange + " is not in range: " + Arrays.toString(range.toArray()));
 		validate("intField", intField, onRule().withPositiveNumber(true).build());
 		validate("integerField", integerField, onRule().withIn(ImmutableSet.of(5, 7, 9)).build(),
 				"integerField " + integerField + " is not in range: " + Arrays.toString(range.toArray()));
 		validate("expirDate", expirDate, onRule().withMin(new Date()).build(), MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
 		validate("email", email, onRule().withRequired(true).build(), "Customized error message for email field");
-		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(), 
+		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(),
 				"Credit card number -" + creditCardNumber + "- is not valid");
 		// Return this bean
 		return this;
