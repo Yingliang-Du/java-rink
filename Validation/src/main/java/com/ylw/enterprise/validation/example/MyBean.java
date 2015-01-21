@@ -60,6 +60,8 @@ public class MyBean extends AbstractPojomaticBean {
 	private String email;
 	private String url;
 	private String builder;	// can i have the same name as the nested class
+	// Simulate runtime error message
+	private String errorMessage;
 
 	/* ------------------Getting/Setting------------------- */
 	public String getStringField() {
@@ -134,6 +136,14 @@ public class MyBean extends AbstractPojomaticBean {
 		this.builder = builder;
 	}
 
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
 	/* -----------------Utilities------------------- */
 	public String getExpirDateAsText() {
 		if (expirDate != null) {
@@ -147,6 +157,13 @@ public class MyBean extends AbstractPojomaticBean {
 		}
 	}
 	
+	/**
+	 * For showing converted JSON string
+	 * @return converted JSON string
+	 */
+	public String getJson() {
+		return "TODO";	//toJson();
+	}
 
 	/* ------------------Builder--------------------- */
 	public static class Builder {
