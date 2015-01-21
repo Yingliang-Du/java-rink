@@ -6,6 +6,9 @@ public class MyContext {
 	private static final Logger LOGGER = Logger.getLogger(MyContext.class);
 
 	private MyBean myBean;
+	private String json;
+	private String showJson = "none";
+	private String success = "none";
 
 	public MyBean getMyBean() {
 		return myBean;
@@ -13,6 +16,26 @@ public class MyContext {
 
 	public void setMyBean(MyBean myBean) {
 		this.myBean = myBean;
+	}
+	
+	public String getSuccess() {
+		return success;
+	}
+
+	public void setSuccess(String success) {
+		this.success = success;
+	}
+
+	public String getJson() {
+		return json;
+	}
+
+	public String getShowJson() {
+		return showJson;
+	}
+
+	public void setShowJson(String showJson) {
+		this.showJson = showJson;
 	}
 
 	/* ------------------Utility Methods-------------------- */
@@ -22,7 +45,7 @@ public class MyContext {
 	 *
 	 * @return JSON String represent the bean
 	 */
-	public String getJson() {
+	public void setJson() {
 		StringBuilder builder = new StringBuilder(this.getClass().getSimpleName()).append(": { \n");
 		// Add JSON String for billing address
 		String jsonString = myBean.toJson();
@@ -34,6 +57,6 @@ public class MyContext {
 		LOGGER.info("JSON String for page context: \n" + jsonString);
 
 		// Return the JSON String
-		return jsonString;
+		this.json = jsonString;
 	}
 }

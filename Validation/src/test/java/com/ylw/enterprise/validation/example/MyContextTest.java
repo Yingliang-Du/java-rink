@@ -19,7 +19,9 @@ public class MyContextTest {
 		context.setMyBean(bean);
 
 		// Call business method
+		context.setJson();
 		String jsonString = context.getJson();
+		assertNotNull("The bean's json string should not be null", jsonString);
 		assertNotNull("The JSON String should not be null", jsonString);
 	}
 
