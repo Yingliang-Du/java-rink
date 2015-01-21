@@ -130,6 +130,7 @@ public abstract class AbstractBeanBinder {
 	/**
 	 * Override this method to put pre bind logic like populate bean with
 	 * default values from data source...
+	 * Make sure to add form key map, if this bean will be used in the Web context
 	 * @return Pre Populated bean
 	 */
 	protected abstract AbstractValidationBean preBind();
