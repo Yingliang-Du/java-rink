@@ -51,11 +51,11 @@ public abstract class AbstractValidationBean {
 	}
 
 	// --------------------Binding----------------------
-	private final Map<String, String> formKey = Maps.newTreeMap();
+	private final Map<String, String> formKeyMap = Maps.newTreeMap();
 	private String beanName;
 
-	public Map<String, String> getFormKey() {
-		return formKey;
+	public Map<String, String> getFormKeyMap() {
+		return formKeyMap;
 	}
 
 	public String getBeanName() {
@@ -67,10 +67,10 @@ public abstract class AbstractValidationBean {
 	}
 
 	/**
-	 * The default form key beanName.fieldName
+	 * The default form key map beanName.fieldName
 	 * beanName can be set or use class name if not
 	 */
-	private void buildDefaultFormKey() {
+	private void buildDefaultFormKeyMap() {
 		// beanName - use class name if not set
 		if (beanName == null) {
 			beanName = this.getClass().getSimpleName();
@@ -82,17 +82,17 @@ public abstract class AbstractValidationBean {
 			Field field = fields[i];
 			String fieldName = field.getName();
 			// Add the field form key to form key map
-			formKey.put(fieldName, beanName + "." + fieldName);
+			formKeyMap.put(fieldName, beanName + "." + fieldName);
 		}
-		LOGGER.info(this.getClass().getSimpleName() + " default form key map: " + formKey);
+		LOGGER.info(this.getClass().getSimpleName() + " default form key map: " + formKeyMap);
 	}
 
 	/**
 	 * Build Form Key Map
 	 */
-	public void buildFormKey() {
+	public void buildFormKeyMap() {
 		// Build default form key map
-		buildDefaultFormKey();
+		buildDefaultFormKeyMap();
 		// Customize base on form keys defined in FormKey class
 		Class<?> formKeyClass = getFormKeyClass();
 		if (formKeyClass != null) {
@@ -112,11 +112,11 @@ public abstract class AbstractValidationBean {
 				}
 				// Put the form key into the map
 				if (key != null) {
-					formKey.put(field.getName(), key);
+					formKeyMap.put(field.getName(), key);
 				}
 			}
 		}
-		LOGGER.info(this.getClass().getSimpleName() + " Form Key Map: " + formKey);
+		LOGGER.info(this.getClass().getSimpleName() + " Form Key Map: " + formKeyMap);
 	}
 
 	/**

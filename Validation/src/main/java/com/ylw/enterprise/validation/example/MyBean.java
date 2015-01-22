@@ -47,7 +47,7 @@ public class MyBean extends AbstractPojomaticBean {
 	public MyBean(String beanName) {
 		// Specify form bean name and build form key map
 		this.setBeanName(beanName);
-		this.buildFormKey();
+		this.buildFormKeyMap();
 	}
 
 	/* ------------------Properties------------------ */
