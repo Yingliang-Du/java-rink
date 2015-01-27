@@ -159,7 +159,7 @@ public abstract class AbstractBeanBinder {
 	 * @return converted parameter map
 	 */
 	protected Map<String, String[]> populateThisBeanToParameterMap(Map<String, String[]> parameterMap) {
-		LOGGER.info("Parameter map before convert -> " + parameterMap);
+		LOGGER.info("Parameter map before convert -> " + printParameterMap(parameterMap));
 		// bean property must be populated at this point
 		Preconditions.checkNotNull("bean property must be populated at this point", bean);
 		// MAP keys (something.propertyName) match bean's properties name (propertyName)
@@ -216,9 +216,31 @@ public abstract class AbstractBeanBinder {
 			}
 		}
 		// Log parameter map info
-		LOGGER.info(bean.getClass().getSimpleName() + " Converted parameter map -> " + parameterMap2);
+		LOGGER.info(bean.getClass().getSimpleName() + " Converted parameter map -> " + printParameterMap(parameterMap2));
 
 		// Return converted MAP
 		return parameterMap2;
+	}
+
+	private String printParameterMap(Map<String, String[]> parameterMap) {
+		StringBuilder builder = new StringBuilder("\n{ \n");
+		String[] values;
+		Set<String> keys = parameterMap.keySet();
+		for (String key : keys) {
+			builder.append("\t").append(key).append("=[");
+			values = parameterMap.get(key);
+			int length = values.length;
+			if (values != null && length != 0) {
+				for (int i=0; i<length-1; i++) {
+					builder.append(values[i]).append(", ");
+				}
+				// Print the last value
+				builder.append(values[length-1]).append("]\n");
+			}
+		}
+		// Close bracket
+		builder.append("}\n");
+		// Return formmated string
+		return builder.toString();
 	}
 }

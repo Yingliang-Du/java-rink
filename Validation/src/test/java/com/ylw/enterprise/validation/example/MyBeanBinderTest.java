@@ -43,7 +43,7 @@ public class MyBeanBinderTest {
 	Map<String, String[]> parameterMap2;
 
 	// Params values
-	private String[] stringField = { "4bb" };
+	private String[] stringField = { "4bb 5cc 6dd" };
 	String[] intField = { "8" };
 	String[] integerField = { "77" };
 	String[] expirDate = { "12/12/2014" };
