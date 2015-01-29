@@ -45,8 +45,14 @@ public class MyBeanTest {
 	@Before
 	public void initInstance() {
 		// Create myBean instance and populate initial state of the bean
-		myBean = MyBean.Builder.defaultValues().withIntField(7).withIntegerField(7).withCreditCard("4111111111111111")
-				.withEmail("email").withStringField("stringField").withUrl("url").build();
+		myBean = MyBean.Builder.defaultValues()
+				.withIntField(7)
+				.withIntegerField(7)
+				.withCreditCard("4111111111111111")
+				.withEmail("email")
+				.withStringField("stringField")
+				.withUrl("url")
+				.build();
 
 		// Validate initial state of the bean
 		myBean.clearErrors().validate();
@@ -93,6 +99,15 @@ public class MyBeanTest {
 		errors = myBean.getFieldErrorMap().get("intField");
 		LOGGER.info("intField errors -> " + errors);
 		assertNull("The intField error should be null", errors);
+	}
+	
+	@Test
+	public void testValidateString() {
+		// Validate minimum length of a string
+		myBean.setStringField("more");
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertTrue("There should be error due to min date violation", myBean.hasError());
 	}
 
 	@Test

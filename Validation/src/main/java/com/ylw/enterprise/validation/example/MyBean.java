@@ -281,32 +281,27 @@ public class MyBean extends AbstractPojomaticBean {
 	@Override
 	public MyBean validate() {
 		Collection<?> range;
+		String rangeString;
 		// Specify validation rule and validate each field that need to be
 		// validated
 		validate("stringField", stringField, onRule().withRequired(true)
-				.withNonBlank(true).build());
+				.withNonBlank(true).withMin(5).build());
 		range = ImmutableSet.of("5", "7", "9");
-		validate(
-				"stringRange",
-				stringRange,
+		rangeString = Arrays.toString(range.toArray());
+		validate("stringRange", stringRange,
 				onRule().withIn(range).build(),
-				"stringRange " + stringRange + " is not in range: "
-						+ Arrays.toString(range.toArray()));
-		validate("intField", intField, onRule().withPositiveNumber(true)
-				.build());
-		validate(
-				"integerField",
-				integerField,
+				"stringRange " + stringRange + " is not in range: " + rangeString);
+		validate("intField", intField, onRule().withPositiveNumber(true).build());
+		validate("integerField", integerField,
 				onRule().withIn(ImmutableSet.of(5, 7, 9)).build(),
-				"integerField " + integerField + " is not in range: "
-						+ Arrays.toString(range.toArray()));
+				"integerField " + integerField + " is not in range: " + rangeString);
 		validate("expirDate", expirDate, onRule().withMin(new Date()).build(),
 				MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
 		validate("email", email, onRule().withRequired(true).build(),
 				"Customized error message for email field");
 		validate("creditCardNumber", creditCardNumber,
-				onRule().withCreditCard(true).build(), "Credit card number -"
-						+ creditCardNumber + "- is not valid");
+				onRule().withCreditCard(true).build(), 
+				"Credit card number -" + creditCardNumber + "- is not valid");
 		// Return this bean
 		return this;
 	}

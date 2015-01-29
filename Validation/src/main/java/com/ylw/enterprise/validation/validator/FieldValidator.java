@@ -122,13 +122,13 @@ public class FieldValidator {
 
 		// Validate min (minimum) rule
 		Object minValue = validationRule.getMin();
-		if (fieldValue != null && minValue != null) {
+		if (minValue != null) {
 			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
 			return validateMin(fieldValue, minValue);
 		}
 
 		// Validate credit card rule
-		if (fieldValue != null && validationRule.isCreditCard()) {
+		if (validationRule.isCreditCard()) {
 			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
 			return validateCreditCard(fieldValue);
 		}
@@ -161,6 +161,8 @@ public class FieldValidator {
 			if (dateMinValue.after(dateValue)) {
 				return FieldErrorCode.FIELD_MIN;
 			}
+			// no rule violated
+			return null;
 		}
 		
 		// Validate Number field
@@ -178,11 +180,32 @@ public class FieldValidator {
 			if (numberMinValue.intValue() > numberValue.intValue()) {
 				return FieldErrorCode.FIELD_MIN;
 			}
+			// no rule violated
+			return null;
 		}
-		else {
-			LOGGER.warn("The validation logic for field type -" + fieldValue.getClass().getName()
+		
+		// Validate String field - the length of the String
+		if (fieldValue instanceof String) {
+			String stringValue = (String) fieldValue;
+			Number numberMinValue;
+			if (minValue instanceof Number) {
+				numberMinValue = (Number) minValue;
+			}
+			else {
+				LOGGER.error("The min rule specified -" + minValue + "- does not apply to String field");
+				return null;
+			}
+			// report rule violation
+			if (numberMinValue.intValue() > stringValue.length()) {
+				return FieldErrorCode.FIELD_MIN;
+			}
+			// no rule violated
+			return null;
+		}
+		
+		// Not implemented field type
+		LOGGER.warn("The min rule validation logic for field type -" + fieldValue.getClass().getName()
 				+ "- had not been implemented yet");
-		}
 		return null;
 	}
 	
