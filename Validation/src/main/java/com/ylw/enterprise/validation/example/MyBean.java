@@ -62,6 +62,8 @@ public class MyBean extends AbstractPojomaticBean {
 	private String builder;	// can i have the same name as the nested class
 	// Simulate runtime error message
 	private String errorMessage;
+	private String zipCode;
+	private String providedZipCode;
 
 	/* ------------------Getting/Setting------------------- */
 	public String getStringField() {
@@ -142,6 +144,22 @@ public class MyBean extends AbstractPojomaticBean {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+
+	public String getZipCode() {
+		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+
+	public String getProvidedZipCode() {
+		return providedZipCode;
+	}
+
+	public void setProvidedZipCode(String providedZipCode) {
+		this.providedZipCode = providedZipCode;
 	}
 
 	/* -----------------Utilities------------------- */
@@ -288,22 +306,27 @@ public class MyBean extends AbstractPojomaticBean {
 				.withNonBlank(true).withMin(5).build());
 		range = ImmutableSet.of("5", "7", "9");
 		rangeString = Arrays.toString(range.toArray());
-		validate("stringRange", stringRange,
-				onRule().withIn(range).build(),
+		validate("stringRange", stringRange, onRule().withIn(range).build(),
 				"stringRange " + stringRange + " is not in range: " + rangeString);
 		validate("intField", intField, onRule().withPositiveNumber(true).build());
-		validate("integerField", integerField,
-				onRule().withIn(ImmutableSet.of(5, 7, 9)).build(),
+		validate("integerField", integerField,	onRule().withIn(ImmutableSet.of(5, 7, 9)).build(),
 				"integerField " + integerField + " is not in range: " + rangeString);
 		validate("expirDate", expirDate, onRule().withMin(new Date()).build(),
 				MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
 		validate("email", email, onRule().withRequired(true).build(),
 				"Customized error message for email field");
-		validate("creditCardNumber", creditCardNumber,
-				onRule().withCreditCard(true).build(), 
+		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(), 
 				"Credit card number -" + creditCardNumber + "- is not valid");
+		validate("zipCode", zipCode, onRule().withBad(zipCodeNotMatchProvided()).build(), MyErrorCode.ZIP_NO_MATCH);
 		// Return this bean
 		return this;
+	}
+	
+	private boolean zipCodeNotMatchProvided() {
+		if (providedZipCode != null && zipCode != null) {
+			return !providedZipCode.equals(zipCode);
+		}
+		return false;
 	}
 
 }

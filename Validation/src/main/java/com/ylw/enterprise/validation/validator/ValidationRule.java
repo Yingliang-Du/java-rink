@@ -30,6 +30,16 @@ public class ValidationRule {
 	private Object min;
 	private Object max;
 	private Collection<?> in; 
+	// For adding customized validation logic
+	private boolean bad;
+
+	public boolean isBad() {
+		return bad;
+	}
+
+	public void setBad(boolean bad) {
+		this.bad = bad;
+	}
 
 	public boolean isCreditCard() {
 		return creditCard;
@@ -170,6 +180,11 @@ public class ValidationRule {
 		
 		public Builder withIn(Collection<?> in) {
 			rule.setIn(in);
+			return this;
+		}
+		
+		public Builder withBad(boolean bad) {
+			rule.setBad(bad);
 			return this;
 		}
 

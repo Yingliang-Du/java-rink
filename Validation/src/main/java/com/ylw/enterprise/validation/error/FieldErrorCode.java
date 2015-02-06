@@ -39,6 +39,8 @@ public enum FieldErrorCode implements ErrorMessage {
 	FIELD_MIN("FieldMin", "field should be greater than the minimum allowed"),
 	
 	FIELD_IN("FieldIn", "field is not in the range"),
+	
+	FIELD_CUSTOMIZED_ERROR("FieldCustomizedzError", "field got customized validation error"),
 
 	//-----Field Binding Error Message-----
 	NON_INTEGER("NonInteger", "field should be an Integer."),

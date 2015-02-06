@@ -91,6 +91,14 @@ public class FieldValidator {
 		if (fieldValue == null) {
 			return null;
 		}
+		
+		/**
+		 *  Deal with customized validation rule,
+		 *  customized validation logic should be based on field value not null.
+		 */
+		if (validationRule.isBad()) {
+			return FieldErrorCode.FIELD_CUSTOMIZED_ERROR;
+		}
 
 		// Deal with NonBlank rule for string type field
 		if (fieldValue != null && validationRule.isNonBlank()) {

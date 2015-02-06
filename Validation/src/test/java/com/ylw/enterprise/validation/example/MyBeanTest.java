@@ -152,6 +152,16 @@ public class MyBeanTest {
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
 		assertTrue("The string is not in the given range", myBean.hasError());
 	}
+	
+	@Test
+	public void testCustomizedValidation() {
+		myBean.setZipCode("12345");
+		myBean.setProvidedZipCode("54321");
+		// validate
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertTrue("The string is not in the given range", myBean.hasError());
+	}
 
 	@Test
 	public void testToJson() {
