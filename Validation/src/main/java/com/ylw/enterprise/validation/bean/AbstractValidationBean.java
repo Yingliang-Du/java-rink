@@ -18,6 +18,8 @@
 package com.ylw.enterprise.validation.bean;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +27,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ylw.enterprise.validation.binder.AbstractBeanBinder;
@@ -33,6 +36,7 @@ import com.ylw.enterprise.validation.error.BeanError;
 import com.ylw.enterprise.validation.error.ErrorMessage;
 import com.ylw.enterprise.validation.error.FieldError;
 import com.ylw.enterprise.validation.error.FieldErrorCode;
+import com.ylw.enterprise.validation.validator.AbstractProjectValidator;
 import com.ylw.enterprise.validation.validator.FieldValidator;
 import com.ylw.enterprise.validation.validator.ValidationRule;
 
@@ -331,6 +335,56 @@ public abstract class AbstractValidationBean {
 		}
 		fieldErrors.add(error);
 		fieldErrorMap.put(fieldName, fieldErrors);
+	}
+	
+	/* Project Specific Validation */
+	private AbstractProjectValidator projectValidator;
+
+	/**
+	 * 
+	 * Create project specific Validator extends {@link AbstractProjectValidator} Set the validator here so the
+	 * validation framework can call the customized validation logic
+	 *
+	 * @param projectValidator - project specific validator
+	 */
+	public void setProjectValidator(AbstractProjectValidator projectValidator) {
+		this.projectValidator = projectValidator;
+	}
+	
+	/**
+	 * Call project validator to verify customized validation logic
+	 * @param customized validation method 
+	 * @return true/false based on verification result
+	 */
+	protected boolean verify(String methodName) {
+		// Check the instance of project specific validator
+		Preconditions.checkNotNull("Please instantiate the project specific validator and set it here", projectValidator);
+		// call the customized validation method
+		try {
+			// Get the method
+			Method method = projectValidator.getClass().getMethod(methodName, null);
+			// call the method
+			return (boolean) method.invoke(projectValidator, null);
+		}
+		catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (NoSuchMethodException | SecurityException e) {
+			// Can not get the method
+			LOGGER.info("Can not get method -" + methodName + "- in class -" + projectValidator.getClass().getName());
+			e.printStackTrace();
+		}
+		// return false by default
+		return false;
 	}
 
 }

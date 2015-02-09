@@ -6,7 +6,7 @@
 
 	<groupId>com.y-l-w.enterprise</groupId>
 	<artifactId>JavaRink</artifactId>
-	<version>1.0.11</version>
+	<version>1.0.12</version>
 	<packaging>pom</packaging>
 
 	<name>JavaRink</name>
@@ -180,7 +180,7 @@
 
 	<profiles>
 		<profile>
-			<id>release</id>
+			<id>sign</id>
 			<build>
 				<plugins>
 					<plugin>
