@@ -38,7 +38,7 @@ public class FieldValidator {
 
 	/**
 	 * validate field validation rule
-	 * 
+	 *
 	 * @return violation rule indicate rule violated; null if there no rule violated
 	 */
 	// public ViolationRule validate(Object fieldValue) {
@@ -86,17 +86,17 @@ public class FieldValidator {
 		if (validationRule.isRequired() && fieldValue == null) {
 			return FieldErrorCode.FIELD_NON_NULL;
 		}
-		
+
 		// No need to validate if fieldValue is null and not required
 		if (fieldValue == null) {
 			return null;
 		}
-		
+
 		/**
 		 *  Deal with customized validation rule,
 		 *  customized validation logic should be based on field value not null.
 		 */
-		if (validationRule.isBad()) {
+		if (validationRule.isBadCondition()) {
 			return FieldErrorCode.FIELD_CUSTOMIZED_ERROR;
 		}
 
@@ -140,9 +140,9 @@ public class FieldValidator {
 			LOGGER.info("the instance of fieldValue: " + fieldValue.getClass().getName());
 			return validateCreditCard(fieldValue);
 		}
-		
+
 		// Validate in rule
-		Collection<?> in = validationRule.getIn(); 
+		Collection<?> in = validationRule.getIn();
 		if (in != null) {
 			if (!in.contains(fieldValue)) {
 				return FieldErrorCode.FIELD_IN;
@@ -172,7 +172,7 @@ public class FieldValidator {
 			// no rule violated
 			return null;
 		}
-		
+
 		// Validate Number field
 		if (fieldValue instanceof Number) {
 			Number numberValue = (Number) fieldValue;
@@ -191,7 +191,7 @@ public class FieldValidator {
 			// no rule violated
 			return null;
 		}
-		
+
 		// Validate String field - the length of the String
 		if (fieldValue instanceof String) {
 			String stringValue = (String) fieldValue;
@@ -210,13 +210,13 @@ public class FieldValidator {
 			// no rule violated
 			return null;
 		}
-		
+
 		// Not implemented field type
 		LOGGER.warn("The min rule validation logic for field type -" + fieldValue.getClass().getName()
 				+ "- had not been implemented yet");
 		return null;
 	}
-	
+
 	private FieldErrorCode validateCreditCard(Object fieldValue) {
 		try {
 			String cardNumber = (String) fieldValue;
@@ -231,7 +231,7 @@ public class FieldValidator {
 			LOGGER.error("The field is not an instance of String, so Credit Card rule can not apply.");
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 }

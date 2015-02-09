@@ -29,23 +29,23 @@ public class ValidationRule {
 	private boolean url;
 	private Object min;
 	private Object max;
-	private Collection<?> in; 
+	private Collection<?> in;
 	// For adding customized validation logic
-	private boolean bad;
+	private boolean badCondition;
 
-	public boolean isBad() {
-		return bad;
+	public boolean isBadCondition() {
+		return badCondition;
 	}
 
-	public void setBad(boolean bad) {
-		this.bad = bad;
+	private void setBadCondition(boolean badCondition) {
+		this.badCondition = badCondition;
 	}
 
 	public boolean isCreditCard() {
 		return creditCard;
 	}
 
-	public void setCreditCard(boolean creditCard) {
+	private void setCreditCard(boolean creditCard) {
 		this.creditCard = creditCard;
 	}
 
@@ -53,7 +53,7 @@ public class ValidationRule {
 		return email;
 	}
 
-	public void setEmail(boolean email) {
+	private void setEmail(boolean email) {
 		this.email = email;
 	}
 
@@ -61,7 +61,7 @@ public class ValidationRule {
 		return nonBlank;
 	}
 
-	public void setNonBlank(boolean nonBlank) {
+	private void setNonBlank(boolean nonBlank) {
 		this.nonBlank = nonBlank;
 	}
 
@@ -69,7 +69,7 @@ public class ValidationRule {
 		return required;
 	}
 
-	public void setRequired(boolean required) {
+	private void setRequired(boolean required) {
 		this.required = required;
 	}
 
@@ -77,7 +77,7 @@ public class ValidationRule {
 		return positiveNumber;
 	}
 
-	public void setPositiveNumber(boolean positiveNumber) {
+	private void setPositiveNumber(boolean positiveNumber) {
 		this.positiveNumber = positiveNumber;
 	}
 
@@ -85,7 +85,7 @@ public class ValidationRule {
 		return unique;
 	}
 
-	public void setUnique(boolean unique) {
+	private void setUnique(boolean unique) {
 		this.unique = unique;
 	}
 
@@ -101,7 +101,7 @@ public class ValidationRule {
 		return min;
 	}
 
-	public void setMin(Object min) {
+	private void setMin(Object min) {
 		this.min = min;
 	}
 
@@ -109,7 +109,7 @@ public class ValidationRule {
 		return max;
 	}
 
-	public void setMax(Object max) {
+	private void setMax(Object max) {
 		this.max = max;
 	}
 
@@ -177,14 +177,14 @@ public class ValidationRule {
 			rule.setMax(max);
 			return this;
 		}
-		
+
 		public Builder withIn(Collection<?> in) {
 			rule.setIn(in);
 			return this;
 		}
-		
-		public Builder withBad(boolean bad) {
-			rule.setBad(bad);
+
+		public Builder withBadCondition(boolean badCondition) {
+			rule.setBadCondition(badCondition);
 			return this;
 		}
 

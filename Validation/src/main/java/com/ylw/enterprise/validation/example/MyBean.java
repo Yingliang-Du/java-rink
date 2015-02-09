@@ -315,13 +315,13 @@ public class MyBean extends AbstractPojomaticBean {
 				MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
 		validate("email", email, onRule().withRequired(true).build(),
 				"Customized error message for email field");
-		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(), 
+		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(),
 				"Credit card number -" + creditCardNumber + "- is not valid");
-		validate("zipCode", zipCode, onRule().withBad(zipCodeNotMatchProvided()).build(), MyErrorCode.ZIP_NO_MATCH);
+		validate("zipCode", zipCode, onRule().withBadCondition(zipCodeNotMatchProvided()).build(), MyErrorCode.ZIP_NO_MATCH);
 		// Return this bean
 		return this;
 	}
-	
+
 	private boolean zipCodeNotMatchProvided() {
 		if (providedZipCode != null && zipCode != null) {
 			return !providedZipCode.equals(zipCode);
