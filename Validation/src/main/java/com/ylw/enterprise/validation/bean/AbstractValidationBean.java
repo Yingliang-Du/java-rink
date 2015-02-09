@@ -358,13 +358,14 @@ public abstract class AbstractValidationBean {
 	 */
 	protected boolean verify(String methodName) {
 		// Check the instance of project specific validator
-		Preconditions.checkNotNull("Please instantiate the project specific validator and set it here", projectValidator);
+		LOGGER.info("The instance of project validator -> " + projectValidator);
+		Preconditions.checkNotNull(projectValidator, "Please instantiate the project specific validator and set it here");
 		// call the customized validation method
 		try {
 			// Get the method
-			Method method = projectValidator.getClass().getMethod(methodName, null);
+			Method method = projectValidator.getClass().getMethod(methodName);
 			// call the method
-			return (boolean) method.invoke(projectValidator, null);
+			return (boolean) method.invoke(projectValidator);
 		}
 		catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block

@@ -54,6 +54,9 @@ public class MyBeanTest {
 				.withUrl("url")
 				.build();
 
+		// set project validator
+		myBean.setProjectValidator(new MyValidator(myBean));
+
 		// Validate initial state of the bean
 		myBean.clearErrors().validate();
 		LOGGER.info("Initial state errors in myBean -> " + myBean.getErrors());
@@ -155,12 +158,22 @@ public class MyBeanTest {
 	
 	@Test
 	public void testCustomizedValidation() {
+		// test zip code not change
+		myBean.setZipCode("54321");
+		myBean.setProvidedZipCode("54321");
+		// validate
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertFalse("The zipcode not change", myBean.hasError());
+		
+		// test zipcode changed
 		myBean.setZipCode("12345");
 		myBean.setProvidedZipCode("54321");
 		// validate
 		myBean.clearErrors().validate();
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
-		assertTrue("The string is not in the given range", myBean.hasError());
+		assertTrue("The zipcode changed", myBean.hasError());
+
 	}
 
 	@Test

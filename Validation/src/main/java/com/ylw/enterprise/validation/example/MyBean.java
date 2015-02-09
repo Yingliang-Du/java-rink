@@ -317,7 +317,8 @@ public class MyBean extends AbstractPojomaticBean {
 				"Customized error message for email field");
 		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(),
 				"Credit card number -" + creditCardNumber + "- is not valid");
-		validate("zipCode", zipCode, onRule().withBadCondition(zipCodeNotMatchProvided()).build(), MyErrorCode.ZIP_NO_MATCH);
+		validate("zipCode", zipCode, onRule().withBadCondition(verify("isZipCodeChanged")).build(), 
+				MyErrorCode.ZIP_NO_MATCH);
 		// Return this bean
 		return this;
 	}
