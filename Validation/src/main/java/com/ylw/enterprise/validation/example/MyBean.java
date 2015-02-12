@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableSet;
 import com.ylw.enterprise.validation.bean.AbstractPojomaticBean;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
 import com.ylw.enterprise.validation.error.FieldError;
+import com.ylw.enterprise.validation.example.MySubBean.Builder2;
 
 @AutoProperty
 public class MyBean extends AbstractPojomaticBean {
@@ -183,6 +184,42 @@ public class MyBean extends AbstractPojomaticBean {
 		return dateString;
 	}
 
+	/* ---------------For Builder Inheritance------------------ */
+	protected static abstract class Init<T extends Init<T>> {
+		protected MyBean myBean;
+
+		protected abstract T self();
+
+		public Init() {
+			this.myBean = new MyBean();
+		}
+
+		public T withStringField(String stringField) {
+			myBean.setStringField(stringField);
+			return self();
+		}
+
+		public MyBean build() {
+			return myBean;
+		}
+	}
+
+	public static class Builder2 extends Init<Builder2> {
+
+		@Override
+		protected Builder2 self() {
+			return this;
+		}
+
+		/**
+		 * @return Builder with default values
+		 */
+		public static Builder2 defaults() {
+			return new Builder2();
+		}
+
+	}
+
 	/* ------------------Builder--------------------- */
 	public static class Builder {
 		private MyBean myBean;
@@ -317,7 +354,7 @@ public class MyBean extends AbstractPojomaticBean {
 				"Customized error message for email field");
 		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(),
 				"Credit card number -" + creditCardNumber + "- is not valid");
-		validate("zipCode", zipCode, onRule().withBadCondition(verify("isZipCodeChanged")).build(), 
+		validate("zipCode", zipCode, onRule().withBadCondition(verify("isZipCodeChanged")).build(),
 				MyErrorCode.ZIP_NO_MATCH);
 		// Return this bean
 		return this;
