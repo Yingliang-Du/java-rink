@@ -28,7 +28,8 @@ import org.pojomatic.annotations.AutoProperty;
 @AutoProperty
 public class BeanError {
 
-	protected String message;
+	private String message;
+	private boolean ignorable;
 	
 	/**
 	 * Must specify default constructor for sub class
@@ -40,15 +41,45 @@ public class BeanError {
 	/**
 	 * Default constructor for constructing error message
 	 */
-	public BeanError(String message) {
+//	public BeanError(String message) {
+//		this.message = message;
+//		this.ignorable = false;
+//	}
+	
+	public BeanError(String message, boolean ignorable) {
 		this.message = message;
+		this.ignorable = ignorable;
 	}
 
 	public String getMessage() {
 		return message;
 	}
+	
+	public boolean isIgnorable() {
+		return ignorable;
+	}
+	
+	/* ---------------Utility Methods-------------- */
+	/**
+	 * Build error message with error code
+	 * @param error code
+	 * @return error message
+	 */
+	protected static String buildMessage(ErrorMessage code) {
+		return code.getMessage();
+	}
+	
+	/**
+	 * Build error message with error code and extra error message
+	 * @param error code
+	 * @param extraMessage
+	 * @return error message
+	 */
+	protected static String buildMessage(ErrorMessage code, String extraMessage) {
+		return new StringBuffer().append(code.getMessage()).append(" ").append(extraMessage).toString();
+	}
 
-// ---------------Override equals, toString and hashCode--------------
+	/* ---------------Override equals, toString and hashCode-------------- */
 	@Override
 	public boolean equals(Object other) {
 		return Pojomatic.equals(this, other);

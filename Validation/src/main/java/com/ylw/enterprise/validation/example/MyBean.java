@@ -360,11 +360,4 @@ public class MyBean extends AbstractPojomaticBean {
 		return this;
 	}
 
-	private boolean zipCodeNotMatchProvided() {
-		if (providedZipCode != null && zipCode != null) {
-			return !providedZipCode.equals(zipCode);
-		}
-		return false;
-	}
-
 }

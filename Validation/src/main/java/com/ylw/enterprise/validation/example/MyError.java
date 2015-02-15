@@ -15,16 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ylw.enterprise.validation.error;
+package com.ylw.enterprise.validation.example;
+
+import com.ylw.enterprise.validation.error.BeanError;
 
 /**
- * Interface will need to be implemented by Error Code Enum for universe API
  *
  */
-public interface ErrorMessage {
-	/**
-	 * Get error message defined in error code ENUM
-	 * @return message
-	 */
-	String getMessage();
+public class MyError extends BeanError {
+
 }

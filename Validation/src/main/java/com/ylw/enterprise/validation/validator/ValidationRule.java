@@ -32,6 +32,16 @@ public class ValidationRule {
 	private Collection<?> in;
 	// For adding customized validation logic
 	private boolean badCondition;
+	// Specify if the validation rule is ignorable
+	private boolean ignorable;
+
+	public boolean isIgnorable() {
+		return ignorable;
+	}
+
+	public void setIgnorable(boolean ignorable) {
+		this.ignorable = ignorable;
+	}
 
 	public boolean isBadCondition() {
 		return badCondition;
@@ -133,6 +143,11 @@ public class ValidationRule {
 			return new Builder();
 		}
 
+		public Builder ignorable(boolean ignorable) {
+			rule.setIgnorable(ignorable);
+			return this;
+		}
+		
 		public Builder withCreditCard(boolean creditCard) {
 			rule.setCreditCard(creditCard);
 			return this;

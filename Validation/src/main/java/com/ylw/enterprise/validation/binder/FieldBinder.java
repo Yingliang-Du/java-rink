@@ -34,7 +34,7 @@ public class FieldBinder {
 	private static final Logger LOGGER = Logger.getLogger(FieldBinder.class);
 	
 	static FieldError buildFieldError(String fieldName, String message) {
-		return new FieldError(fieldName, FieldErrorCode.RUNTIME, message);
+		return new FieldError(fieldName, FieldErrorCode.RUNTIME, message, false);
 	}
 
 	/**
@@ -105,14 +105,14 @@ public class FieldBinder {
 		}
 		catch (IllegalArgumentException | IllegalAccessException e) {
 			// build error
-			error = new FieldError(fieldName, FieldErrorCode.EXCEPTION, e.getMessage());
+			error = new FieldError(fieldName, FieldErrorCode.EXCEPTION, e.getMessage(), false);
 			// log the exception
 			e.printStackTrace();
 		}
 
 		// build and return error - field type had no been dealt with
 		message = "Field type - " + fieldType + " need to be dealt with.";
-		error = new FieldError(fieldName, FieldErrorCode.RUNTIME, message);
+		error = new FieldError(fieldName, FieldErrorCode.RUNTIME, message, false);
 		return error;
 	}
 
@@ -132,7 +132,7 @@ public class FieldBinder {
 		}
 		catch (NumberFormatException e) {
 			e.printStackTrace();
-			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER);
+			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER, false);
 		}
 
 		return error;
@@ -148,7 +148,7 @@ public class FieldBinder {
 		}
 		catch (NumberFormatException e) {
 			e.printStackTrace();
-			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER);
+			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER, false);
 		}
 
 		return error;
@@ -167,7 +167,7 @@ public class FieldBinder {
 		catch (NumberFormatException e) {
 			// Do not bind - use the default value defined in the bean
 			e.printStackTrace();
-			error = new FieldError(fieldName, FieldErrorCode.NON_LONG);
+			error = new FieldError(fieldName, FieldErrorCode.NON_LONG, false);
 		}
 
 		return error;
@@ -183,7 +183,7 @@ public class FieldBinder {
 		}
 		catch (NumberFormatException e) {
 			e.printStackTrace();
-			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER);
+			error = new FieldError(fieldName, FieldErrorCode.NON_INTEGER, false);
 		}
 
 		return error;
@@ -202,7 +202,7 @@ public class FieldBinder {
 		catch (ParseException e) {
 			// The string value can not be parsed to Date
 			e.printStackTrace();
-			error = new FieldError(fieldName, FieldErrorCode.NON_DATE);
+			error = new FieldError(fieldName, FieldErrorCode.NON_DATE, false);
 		}
 		
 		return error;

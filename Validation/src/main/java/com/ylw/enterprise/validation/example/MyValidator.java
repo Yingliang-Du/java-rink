@@ -41,6 +41,7 @@ public class MyValidator extends AbstractProjectValidator {
 		if (providedZipCode != null && zipCode != null) {
 			return !providedZipCode.equals(zipCode);
 		}
+		// Return false by default
 		return false;
 	}
 

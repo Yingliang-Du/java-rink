@@ -212,13 +212,40 @@ public abstract class AbstractValidationBean {
 	 * 
 	 * @param message
 	 */
-	public void addError(String message) {
-		addError(new BeanError(message));
-	}
+//	public void addError(String message) {
+//		addError(new BeanError(message));
+//	}
 
-	/** See if there are errors in this object */
+	/* See if there are errors in this object */
 	public boolean hasError() {
 		return !errors.isEmpty() || !fieldErrorMap.isEmpty();
+	}
+	
+	/**
+	 * Validation will pass if there is no non-ignorable errors after validation
+	 * @return true if passed the validation, false otherwise
+	 */
+	public boolean pass() {
+		// if errors contains non-ignorable error - return false
+		if (!errors.isEmpty()) {
+			for(BeanError error : errors) {
+				if(!error.isIgnorable()) {
+					return false;
+				}
+			}
+		}
+		// if field errors contains non-ignorable error - return false
+		if (!fieldErrorMap.isEmpty()) {
+			for(Set<FieldError> fieldErrors : fieldErrorMap.values()) {
+				for(BeanError error : fieldErrors) {
+					if(!error.isIgnorable()) {
+						return false;
+					}
+				}
+			}
+		}
+		// otherwise - return true
+		return true;
 	}
 
 	/**
@@ -258,8 +285,7 @@ public abstract class AbstractValidationBean {
 	 * @param fieldName
 	 * @param fieldValue
 	 * @param validationRule
-	 * @param errorMessage
-	 *           - customized error message
+	 * @param errorMessage - customized error message
 	 */
 	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, String errorMessage) {
 		validate(validationRule, fieldName, fieldValue, errorMessage);
@@ -271,8 +297,7 @@ public abstract class AbstractValidationBean {
 	 * @param fieldName
 	 * @param fieldValue
 	 * @param validationRule
-	 * @param message
-	 *           - customized error code
+	 * @param message - customized error code
 	 */
 	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, ErrorMessage message) {
 		validate(validationRule, fieldName, fieldValue, message);
@@ -297,20 +322,21 @@ public abstract class AbstractValidationBean {
 		FieldValidator validator = new FieldValidator(validationRule);
 		FieldErrorCode fieldErrorCode = validator.validate(fieldValue);
 		// Deal with violated rules and add field error to errors if any
+		boolean ignorable = validationRule.isIgnorable();
 		if (fieldErrorCode != null) {
 			// There is error - build error object
-			FieldError error = new FieldError(fieldName, fieldErrorCode);
+			FieldError error = new FieldError(fieldName, fieldErrorCode, ignorable);
 			if (customError == null) {
 				// build error object base on error code
-				error = new FieldError(fieldName, fieldErrorCode);
+				error = new FieldError(fieldName, fieldErrorCode, ignorable);
 			}
 			else {
 				if (customError instanceof ErrorMessage) {
-					error = new FieldError(fieldName, ((ErrorMessage) customError).getMessage());
+					error = new FieldError(fieldName, ((ErrorMessage) customError).getMessage(), ignorable);
 				}
 				else
 					if (customError instanceof String) {
-						error = new FieldError(fieldName, (String) customError);
+						error = new FieldError(fieldName, (String) customError, ignorable);
 					}
 					else {
 						LOGGER.warn("Unricegnized customized message -> " + customError);

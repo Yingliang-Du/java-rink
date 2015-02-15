@@ -30,23 +30,24 @@ public class FieldError extends BeanError {
 	//	private FieldErrorCode code;
 	private String fieldName;
 	
-// ---------------Constructors--------------
+	/* ---------------Constructors-------------- */
 	/**
 	 * Construct error base on customized error message
+	 * @param ignorable TODO
 	 */
-	public FieldError(String fieldName, String errorMessage) {
+	public FieldError(String fieldName, String errorMessage, boolean ignorable) {
+		super(errorMessage, ignorable);
 		this.fieldName = fieldName;
-		this.message = errorMessage;
 	}
 	
 	/**
 	 * Construct error base on FieldErrorCode message
 	 * @param fieldName
 	 * @param code - FieldErrorCode
+	 * @param ignorable TODO
 	 */
-	public FieldError(@Nonnull String fieldName, @Nonnull FieldErrorCode code) {
-		this.fieldName = fieldName;
-		this.message = buildMessage(fieldName, code);
+	public FieldError(@Nonnull String fieldName, @Nonnull FieldErrorCode code, boolean ignorable) {
+		this(fieldName, buildMessage(fieldName, code), ignorable);
 	}
 	
 	/**
@@ -54,13 +55,13 @@ public class FieldError extends BeanError {
 	 * @param fieldName
 	 * @param code - FieldErrorCode
 	 * @param message
+	 * @param ignorable TODO
 	 */
-	public FieldError(@Nonnull String fieldName, @Nonnull FieldErrorCode code, @Nonnull String message) {
-		this.fieldName = fieldName;
-		this.message = buildMessage(fieldName, code, message);
+	public FieldError(@Nonnull String fieldName, @Nonnull FieldErrorCode code, @Nonnull String message, boolean ignorable) {
+		this(fieldName, buildMessage(fieldName, code, message), ignorable);
 	}
 
-// ---------------Getting/Setting methods--------------
+	/* ---------------Getting/Setting methods-------------- */
 //	public FieldErrorCode getCode() {
 //		return code;
 //	}
@@ -69,8 +70,8 @@ public class FieldError extends BeanError {
 		return fieldName;
 	}
 
-// -------------------Utility methods-----------------------
-	private String buildMessage(String fieldName, FieldErrorCode code) {
+	/* -------------------Utility Methods----------------------- */
+	private static String buildMessage(String fieldName, FieldErrorCode code) {
 		// Build message
 		StringBuilder builder = new StringBuilder().append("The ").append(fieldName).append(" ")
 				.append(code.getMessage());
@@ -79,7 +80,7 @@ public class FieldError extends BeanError {
 		return builder.toString();
 	}
 	
-	private String buildMessage(String fieldName, FieldErrorCode code, String message) {
+	private static String buildMessage(String fieldName, FieldErrorCode code, String message) {
 		// Build message
 		StringBuilder builder = new StringBuilder().append("The ").append(fieldName).append(" ")
 				.append(code.getMessage()).append(" ").append(message);
