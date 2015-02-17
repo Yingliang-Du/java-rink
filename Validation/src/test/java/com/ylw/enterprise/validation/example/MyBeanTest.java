@@ -175,6 +175,25 @@ public class MyBeanTest {
 		assertTrue("The zipcode changed", myBean.hasError());
 
 	}
+	
+	@Test
+	public void testIgnorableError() {
+		// test stringRange
+		myBean.setStringRange("11");
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertTrue("The string is not in the range", myBean.hasError());
+		// verify passed
+		assertTrue("The error is ignorable", myBean.pass());
+		
+		// test intField
+		myBean.setIntField(-11);
+		myBean.clearErrors().validate();
+		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
+		assertTrue("The string is not in the range", myBean.hasError());
+		// verify passed
+		assertFalse("The error is not ignorable", myBean.pass());
+	}
 
 	@Test
 	public void testToJson() {

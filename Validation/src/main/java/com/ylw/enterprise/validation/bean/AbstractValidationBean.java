@@ -385,7 +385,9 @@ public abstract class AbstractValidationBean {
 	protected boolean verify(String methodName) {
 		// Check the instance of project specific validator
 		LOGGER.info("The instance of project validator -> " + projectValidator);
-		Preconditions.checkNotNull(projectValidator, "Please instantiate the project specific validator and set it here");
+		Preconditions.checkNotNull(projectValidator, "Before doing the customized validation -" + methodName + "-, "
+				+ "please instantiate the project specific validator and set it into this bean --" 
+				+ this.getClass().getSimpleName() + "--");
 		// call the customized validation method
 		try {
 			// Get the method

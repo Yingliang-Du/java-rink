@@ -39,7 +39,7 @@ public class ValidationRule {
 		return ignorable;
 	}
 
-	public void setIgnorable(boolean ignorable) {
+	private void setIgnorable(boolean ignorable) {
 		this.ignorable = ignorable;
 	}
 
@@ -103,7 +103,7 @@ public class ValidationRule {
 		return url;
 	}
 
-	public void setUrl(boolean url) {
+	private void setUrl(boolean url) {
 		this.url = url;
 	}
 
@@ -127,11 +127,11 @@ public class ValidationRule {
 		return in;
 	}
 
-	public void setIn(Collection<?> in) {
+	private void setIn(Collection<?> in) {
 		this.in = in;
 	}
 
-	/** ------------------Builder Pattern-------------------- */
+	/* ------------------Builder Pattern-------------------- */
 	public static class Builder {
 		private ValidationRule rule;
 
@@ -148,57 +148,57 @@ public class ValidationRule {
 			return this;
 		}
 		
-		public Builder withCreditCard(boolean creditCard) {
+		public Builder creditCard(boolean creditCard) {
 			rule.setCreditCard(creditCard);
 			return this;
 		}
 
-		public Builder withEmail(boolean email) {
+		public Builder email(boolean email) {
 			rule.setEmail(email);
 			return this;
 		}
 
-		public Builder withNonBlank(boolean nonBlank) {
+		public Builder nonBlank(boolean nonBlank) {
 			rule.setNonBlank(nonBlank);
 			return this;
 		}
 
-		public Builder withRequired(boolean required) {
+		public Builder required(boolean required) {
 			rule.setRequired(required);
 			return this;
 		}
 
-		public Builder withPositiveNumber(boolean positiveNumber) {
+		public Builder positiveNumber(boolean positiveNumber) {
 			rule.setPositiveNumber(positiveNumber);
 			return this;
 		}
 
-		public Builder withUnique(boolean unique) {
+		public Builder unique(boolean unique) {
 			rule.setUnique(unique);
 			return this;
 		}
 
-		public Builder withUrl(boolean url) {
+		public Builder url(boolean url) {
 			rule.setUrl(url);
 			return this;
 		}
 
-		public Builder withMin(Object min) {
+		public Builder min(Object min) {
 			rule.setMin(min);
 			return this;
 		}
 
-		public Builder withMax(Object max) {
+		public Builder max(Object max) {
 			rule.setMax(max);
 			return this;
 		}
 
-		public Builder withIn(Collection<?> in) {
+		public Builder in(Collection<?> in) {
 			rule.setIn(in);
 			return this;
 		}
 
-		public Builder withBadCondition(boolean badCondition) {
+		public Builder badCondition(boolean badCondition) {
 			rule.setBadCondition(badCondition);
 			return this;
 		}

@@ -55,6 +55,7 @@ public class MyBean extends AbstractPojomaticBean {
 	private String stringField;
 	private String stringRange;
 	private int intField;
+	private int calculated;
 	private Integer integerField;
 	private Date expirDate;
 	private String creditCardNumber;
@@ -89,6 +90,14 @@ public class MyBean extends AbstractPojomaticBean {
 
 	public void setIntField(int intField) {
 		this.intField = intField;
+	}
+
+	public int getCalculated() {
+		return calculated;
+	}
+
+	public void setCalculated(int calculated) {
+		this.calculated = calculated;
 	}
 
 	public Integer getIntegerField() {
@@ -326,6 +335,8 @@ public class MyBean extends AbstractPojomaticBean {
 	public static class FormKey {
 		public static final String builder = "form_key_builder";
 		public static final String stringField = "customized_form_key_stringField";
+		public static final String zipCode = "customized_form_key_for_zipCode";
+		public static final String providedZipCode = "customized_form_key_for_providedZipCode";
 	}
 
 	/* ------------------Validation-------------------- */
@@ -339,22 +350,22 @@ public class MyBean extends AbstractPojomaticBean {
 		String rangeString;
 		// Specify validation rule and validate each field that need to be
 		// validated
-		validate("stringField", stringField, onRule().withRequired(true)
-				.withNonBlank(true).withMin(5).build());
+		validate("stringField", stringField, onRule().required(true)
+				.nonBlank(true).min(5).build());
 		range = ImmutableSet.of("5", "7", "9");
 		rangeString = Arrays.toString(range.toArray());
-		validate("stringRange", stringRange, onRule().withIn(range).build(),
+		validate("stringRange", stringRange, onRule().in(range).ignorable(true).build(),
 				"stringRange " + stringRange + " is not in range: " + rangeString);
-		validate("intField", intField, onRule().withPositiveNumber(true).build());
-		validate("integerField", integerField,	onRule().withIn(ImmutableSet.of(5, 7, 9)).build(),
+		validate("intField", intField, onRule().positiveNumber(true).build());
+		validate("integerField", integerField,	onRule().in(ImmutableSet.of(5, 7, 9)).build(),
 				"integerField " + integerField + " is not in range: " + rangeString);
-		validate("expirDate", expirDate, onRule().withMin(new Date()).build(),
+		validate("expirDate", expirDate, onRule().min(new Date()).build(),
 				MyErrorCode.EXPIRATION_DATE_TOO_EARLY);
-		validate("email", email, onRule().withRequired(true).build(),
+		validate("email", email, onRule().required(true).build(),
 				"Customized error message for email field");
-		validate("creditCardNumber", creditCardNumber, onRule().withCreditCard(true).build(),
+		validate("creditCardNumber", creditCardNumber, onRule().creditCard(true).build(),
 				"Credit card number -" + creditCardNumber + "- is not valid");
-		validate("zipCode", zipCode, onRule().withBadCondition(verify("isZipCodeChanged")).build(),
+		validate("zipCode", zipCode, onRule().badCondition(verify("isZipCodeChanged")).build(),
 				MyErrorCode.ZIP_NO_MATCH);
 		// Return this bean
 		return this;

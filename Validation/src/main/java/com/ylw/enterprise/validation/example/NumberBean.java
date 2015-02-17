@@ -99,14 +99,14 @@ public class NumberBean extends AbstractPojomaticBean {
 	 */
 	@Override
 	public AbstractValidationBean validate() {
-		validate("byteField", byteField, onRule().withMin(5).withMax(9).build());
-		validate("shortField", shortField, onRule().withMin(5).withMax(9).build());
-		validate("integerField", integerField, onRule().withMin(5).build());
-		validate("longField", longField, onRule().withMin(5).build());
-		validate("floatField", floatField, onRule().withMin(5).build());
-		validate("doubleField", doubleField, onRule().withMin(5).build());
-		validate("bigIntegerField", bigIntegerField, onRule().withMin(5).build());
-		validate("bigDecimalField", bigDecimalField, onRule().withMin(5).build());
+		validate("byteField", byteField, onRule().min(5).max(9).build());
+		validate("shortField", shortField, onRule().min(5).max(9).build());
+		validate("integerField", integerField, onRule().min(5).build());
+		validate("longField", longField, onRule().min(5).build());
+		validate("floatField", floatField, onRule().min(5).build());
+		validate("doubleField", doubleField, onRule().min(5).build());
+		validate("bigIntegerField", bigIntegerField, onRule().min(5).build());
+		validate("bigDecimalField", bigDecimalField, onRule().min(5).build());
 		// Return this bean
 		return this;
 	}

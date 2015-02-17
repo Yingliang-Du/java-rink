@@ -71,7 +71,7 @@ public abstract class AbstractBeanBinder {
 	 */
 	private void bind(@Nonnull Map<String, String[]> parameterMap) {
 		// bean property must be populated at this point
-		Preconditions.checkNotNull("bean property must be populated at this point", bean);
+		Preconditions.checkNotNull(bean, "bean property must be populated at this point");
 		FieldError error;
 		// Get all fields of this bean
 		Class<?> clazz = bean.getClass();
@@ -161,7 +161,7 @@ public abstract class AbstractBeanBinder {
 	protected Map<String, String[]> populateThisBeanToParameterMap(Map<String, String[]> parameterMap) {
 		LOGGER.info("Parameter map before convert -> " + printParameterMap(parameterMap));
 		// bean property must be populated at this point
-		Preconditions.checkNotNull("bean property must be populated at this point", bean);
+		Preconditions.checkNotNull(bean, "bean property must be populated at this point");
 		// MAP keys (something.propertyName) match bean's properties name (propertyName)
 		// Make a copy of parameter map and modify - parameterMap is locked
 		Map<String, String[]> parameterMap2 = Maps.newHashMap(parameterMap);
