@@ -81,9 +81,9 @@ public class MyBeanBinderTest {
 
 		LOGGER.debug("MyBean.errors -> " + myBean.getErrors());
 		assertEquals("myBean.stringField binded correctly", stringField[0], myBean.getStringField());
-		assertEquals("myBean.intField binded correctly", intField[0], String.valueOf(myBean.getIntField()));
-		assertEquals("myBean.integerField binded correctly", integerField[0], myBean.getIntegerField().toString());
-		assertEquals("myBean.expirDate binded correctly", expirDate[0], myBean.getExpirDateAsText());
+		assertNotSame("myBean.intField should not binded b/c not in FormKey", intField[0], String.valueOf(myBean.getIntField()));
+		//assertEquals("myBean.integerField binded correctly", integerField[0], myBean.getIntegerField().toString());
+		//assertEquals("myBean.expirDate binded correctly", expirDate[0], myBean.getExpirDateAsText());
 		LOGGER.debug("MyBean -> " + myBean);
 		assertFalse("Bean bind success.", myBean.hasError());
 
@@ -94,7 +94,23 @@ public class MyBeanBinderTest {
 		myBean = (MyBean)bean;
 		LOGGER.debug("MyBean.errors -> " + myBean.getErrors());
 		LOGGER.debug("MyBean -> " + myBean);
-		assertTrue("Bean bind not success - non-int to int field.", myBean.hasError());
+//		assertTrue("Bean bind not success - non-int to int field.", myBean.hasError());
+	}
+
+	@Test
+	public void testBindOnlyPropertiesInFormKey() {
+		// Instantiate binder
+		myBeanBinder = new MyBeanBinder(parameterMap);
+		// Test success Bind
+		Object bean = myBeanBinder.bind();
+		assertNotNull("The binded bean should not be null", bean);
+		assertTrue("The thye of binded bean should be MyBean", bean instanceof MyBean);
+
+		myBean = (MyBean) bean;
+		LOGGER.info("The stringField should be binded -> " + myBean.getStringField());
+		assertEquals("The stringField should be binded", "4bb 5cc 6dd", myBean.getStringField());
+		LOGGER.info("The intField should not be binded -> " + myBean.getIntField());
+		assertNotSame("The intField should not be binded", 8, myBean.getIntField());
 	}
 
 	@Test
@@ -110,9 +126,9 @@ public class MyBeanBinderTest {
 
 		// Verify binding fields
 		assertEquals("myBean.stringField binded correctly", stringField[0], myBean.getStringField());
-		assertEquals("myBean.intField binded correctly", intField[0], String.valueOf(myBean.getIntField()));
-		assertEquals("myBean.integerField binded correctly", integerField[0], myBean.getIntegerField().toString());
-		assertEquals("myBean.expirDate binded correctly", expirDate[0], myBean.getExpirDateAsText());
+		assertNotSame("myBean.intField not binded b/c not in FormKey", intField[0], String.valueOf(myBean.getIntField()));
+		//assertEquals("myBean.integerField binded correctly", integerField[0], myBean.getIntegerField().toString());
+		//assertEquals("myBean.expirDate binded correctly", expirDate[0], myBean.getExpirDateAsText());
 		LOGGER.debug("MyBean.errors -> " + myBean.getErrors());
 		LOGGER.debug("MyBean -> " + myBean);
 		// Verify binding errors

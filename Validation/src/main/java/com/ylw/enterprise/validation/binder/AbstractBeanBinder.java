@@ -75,19 +75,54 @@ public abstract class AbstractBeanBinder {
 		FieldError error;
 		// Get all fields of this bean
 		Class<?> clazz = bean.getClass();
-		Field[] fields = clazz.getDeclaredFields();
-		fields = getFields(clazz, fields);
+		// Find FormKey class
+		Class<?> formKeyClazz = null;
+		for (Class c : clazz.getClasses()) {
+			if (c.getSimpleName().equals("FormKey")) {
+				formKeyClazz = c;
+				break;
+			}
+		}
+		/* Get declared fields from FormKey class - only bind those fields,
+		 * this is to prevent malicious user to add something harmful.
+		 * If FormKey class not declared - bind to all fields
+		 */
+		Field[] fields;
+		if (formKeyClazz != null) {
+			LOGGER.info("Found FormKey class -> " + formKeyClazz.getName());
+			// Get declared fields from FormKey class
+			fields = formKeyClazz.getDeclaredFields();
+		}
+		else {
+			fields = clazz.getDeclaredFields();
+			// Get all fields in the object hierarchy
+			fields = getFields(clazz, fields);
+			LOGGER.warn("The FormKey inner class is not defined in your bean, all fields will"
+					+ " be binded from web form, please declare fields in FormKey to restrict!");
+
+		}
+
 		// bind parameter to each matching field
 		for (int i=0; i<fields.length; i++) {
 			Field field = fields[i];
-			String[] stringValues = parameterMap.get(field.getName());
-			if (stringValues != null) {
-				// found a match - bind to the field
-				error = FieldBinder.bindToField(bean, field, stringValues);
-				// add error
-				if (error != null) {
-					bean.addError(error);
+			String fieldName = field.getName();
+			// Get field by name b/c FormKey is not the bean class
+			try {
+				field = clazz.getDeclaredField(fieldName);
+				String[] stringValues = parameterMap.get(fieldName);
+				if (stringValues != null) {
+					// found a match - bind to the field
+					error = FieldBinder.bindToField(bean, field, stringValues);
+					// add error
+					if (error != null) {
+						bean.addError(error);
+					}
 				}
+			}
+			catch (NoSuchFieldException | SecurityException e) {
+				// Log warning message
+				LOGGER.warn("The field -" + fieldName + "- does not exist or not accessable in bean -"
+						+ clazz.getSimpleName() + "-");
 			}
 		}
 	}
