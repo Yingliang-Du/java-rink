@@ -350,6 +350,10 @@ public class MyBean extends AbstractPojomaticBean {
 		String rangeString;
 		// Specify validation rule and validate each field that need to be
 		// validated
+		validate("stringField", stringField, onRule().required(true).build(), 
+				"The same message should not be added twice!");
+		validate("stringField", stringField, onRule().required(true).build(), 
+				"The same message should not be added twice!");
 		validate("stringField", stringField, onRule().required(true)
 				.nonBlank(true).min(5).build());
 		range = ImmutableSet.of("5", "7", "9");

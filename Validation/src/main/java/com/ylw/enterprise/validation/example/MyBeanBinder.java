@@ -33,7 +33,7 @@ public class MyBeanBinder extends AbstractBeanBinder {
 	 * @see com.ylw.enterprise.validation.binder.AbstractBeanBinder#preBind()
 	 */
 	@Override
-	protected AbstractValidationBean preBind() {
+	protected MyBean preBind() {
 		// Populate MyBean with default values
 //		return MyBean.Builder.defaultValues().build();
 		return MyBean.Builder.formKeyValues("myBean").build();
