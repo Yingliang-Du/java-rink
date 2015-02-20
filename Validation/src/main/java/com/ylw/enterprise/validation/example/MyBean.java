@@ -329,7 +329,8 @@ public class MyBean extends AbstractPojomaticBean {
 
 	/* -------------------Binding------------------- */
 	/**
-	 * Define form key will be used in the form and data binding logic
+	 * Define form key will be used in the form and data binding logic,
+	 * Only fields declared in this inner class will be binded
 	 *
 	 */
 	public static class FormKey {

@@ -19,6 +19,7 @@ package com.ylw.enterprise.validation.example;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -103,7 +104,7 @@ public class MyBeanTest {
 		LOGGER.info("intField errors -> " + errors);
 		assertNull("The intField error should be null", errors);
 	}
-	
+
 	@Test
 	public void testValidateString() {
 		// Validate minimum length of a string
@@ -155,7 +156,7 @@ public class MyBeanTest {
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
 		assertTrue("The string is not in the given range", myBean.hasError());
 	}
-	
+
 	@Test
 	public void testCustomizedValidation() {
 		// test zip code not change
@@ -165,7 +166,7 @@ public class MyBeanTest {
 		myBean.clearErrors().validate();
 		LOGGER.info("Errors in myBean -> " + myBean.getErrors());
 		assertFalse("The zipcode not change", myBean.hasError());
-		
+
 		// test zipcode changed
 		myBean.setZipCode("12345");
 		myBean.setProvidedZipCode("54321");
@@ -175,7 +176,7 @@ public class MyBeanTest {
 		assertTrue("The zipcode changed", myBean.hasError());
 
 	}
-	
+
 	@Test
 	public void testIgnorableError() {
 		// test stringRange
@@ -185,7 +186,7 @@ public class MyBeanTest {
 		assertTrue("The string is not in the range", myBean.hasError());
 		// verify passed
 		assertTrue("The error is ignorable", myBean.pass());
-		
+
 		// test intField
 		myBean.setIntField(-11);
 		myBean.clearErrors().validate();
@@ -223,6 +224,40 @@ public class MyBeanTest {
 		LOGGER.info("Bean with formKey added -> " + bean);
 		assertNotNull("The bean should not be null", bean);
 		assertFalse("The formKeys in the bean should not be empty", bean.getFormKeyMap().isEmpty());
+	}
+
+	@Test
+	public void testReflection() {
+		Class<?> clazz = myBean.getClass();
+		// Print out classes
+		for (Class c : clazz.getClasses()) {
+			LOGGER.info("class name -> " + c.getName() + " simple name -> " + c.getSimpleName());
+		}
+		// Print out declared classes
+		for (Class c : clazz.getDeclaredClasses()) {
+			LOGGER.info("declared class name -> " + c.getName() + " simple name -> " + c.getSimpleName());
+		}
+
+		// Find FormKey class
+		Class<?> formKeyClazz = null;
+		for (Class c : clazz.getClasses()) {
+			if (c.getSimpleName().equals("FormKey")) {
+				formKeyClazz = c;
+				break;
+			}
+		}
+		// Print out declared fields in FormKey class
+		if (formKeyClazz != null) {
+			LOGGER.info(formKeyClazz.getName());
+			// Print out declared field
+			for (Field f : formKeyClazz.getDeclaredFields()) {
+				LOGGER.info("declared field -> " + f.getName());
+			}
+			// Print out field
+			for (Field f : formKeyClazz.getFields()) {
+				LOGGER.info("field -> " + f.getName());
+			}
+		}
 	}
 
 	@Test
