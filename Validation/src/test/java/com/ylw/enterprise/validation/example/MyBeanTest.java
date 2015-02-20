@@ -104,6 +104,14 @@ public class MyBeanTest {
 		LOGGER.info("intField errors -> " + errors);
 		assertNull("The intField error should be null", errors);
 	}
+	
+	@Test
+	public void testTheSameMessage() {
+		myBean.setStringField(null);
+		myBean.clearErrors().validate();
+		LOGGER.info("stringField errors -> " + myBean.getErrors());
+		assertTrue("The same message should not be added twice!", myBean.getErrors().size() == 2);
+	}
 
 	@Test
 	public void testValidateString() {
