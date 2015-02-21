@@ -333,7 +333,7 @@ public class MyBean extends AbstractPojomaticBean {
 	 * Only fields declared in this inner class will be binded
 	 *
 	 */
-	public static class FormKey {
+	public class FormKey {
 		public static final String builder = "form_key_builder";
 		public static final String stringField = "customized_form_key_stringField";
 		public static final String zipCode = "customized_form_key_for_zipCode";
@@ -351,11 +351,11 @@ public class MyBean extends AbstractPojomaticBean {
 		String rangeString;
 		// Specify validation rule and validate each field that need to be
 		// validated
-		validate("stringField", stringField, onRule().required(true).build(), 
+		validate("stringField", stringField, onRule().required(true).build(),
 				"The same message should not be added twice!");
-		validate("stringField", stringField, onRule().required(true).build(), 
+		validate("stringField", stringField, onRule().required(true).build(),
 				"The same message should not be added twice!");
-		validate("stringField", stringField, onRule().required(true).build(), 
+		validate("stringField", stringField, onRule().required(true).build(),
 				"The different message should be added!");
 		validate("stringField", stringField, onRule().nonBlank(true).min(5).build());
 		range = ImmutableSet.of("5", "7", "9");

@@ -66,7 +66,7 @@ public abstract class AbstractValidationBean {
 		return beanName;
 	}
 
-	public void setBeanName(String beanName) {
+	protected void setBeanName(String beanName) {
 		this.beanName = beanName;
 	}
 
@@ -126,7 +126,7 @@ public abstract class AbstractValidationBean {
 	/**
 	 * Check if the FormKey nested class declared in the sub class. FormKey class is where the customized form key for
 	 * each field defined. Form keys in this class will be used in the form and data binding logic.
-	 * 
+	 *
 	 * @return true - if the class is declared; false - if not
 	 */
 	private boolean isFormKeyClassDefined() {
@@ -161,7 +161,7 @@ public abstract class AbstractValidationBean {
 
 	/**
 	 * Bind this bean from HTTP request form parameters
-	 * 
+	 *
 	 * @param parameterMap
 	 *           - parameter map from web request
 	 * @return this instance
@@ -209,7 +209,7 @@ public abstract class AbstractValidationBean {
 
 	/**
 	 * Construct and add error from general error message
-	 * 
+	 *
 	 * @param message
 	 */
 //	public void addError(String message) {
@@ -220,7 +220,7 @@ public abstract class AbstractValidationBean {
 	public boolean hasError() {
 		return !errors.isEmpty() || !fieldErrorMap.isEmpty();
 	}
-	
+
 	/**
 	 * Validation will pass if there is no non-ignorable errors after validation
 	 * @return true if passed the validation, false otherwise
@@ -250,7 +250,7 @@ public abstract class AbstractValidationBean {
 
 	/**
 	 * Clear both object and field errors - normally do this before bind and validate
-	 * 
+	 *
 	 * @return this instance
 	 */
 	public AbstractValidationBean clearErrors() {
@@ -281,7 +281,7 @@ public abstract class AbstractValidationBean {
 
 	/**
 	 * Validate the field base on the validation rule with customized error message
-	 * 
+	 *
 	 * @param fieldName
 	 * @param fieldValue
 	 * @param validationRule
@@ -293,7 +293,7 @@ public abstract class AbstractValidationBean {
 
 	/**
 	 * Validate the field base on the validation rule with customized error message code
-	 * 
+	 *
 	 * @param fieldName
 	 * @param fieldValue
 	 * @param validationRule
@@ -305,7 +305,7 @@ public abstract class AbstractValidationBean {
 
 	/**
 	 * Validate the field base on the validation rule
-	 * 
+	 *
 	 * @param fieldName
 	 * @param fieldValue
 	 * @param validationRule
@@ -362,12 +362,12 @@ public abstract class AbstractValidationBean {
 		fieldErrors.add(error);
 		fieldErrorMap.put(fieldName, fieldErrors);
 	}
-	
+
 	/* Project Specific Validation */
 	private AbstractProjectValidator projectValidator;
 
 	/**
-	 * 
+	 *
 	 * Create project specific Validator extends {@link AbstractProjectValidator} Set the validator here so the
 	 * validation framework can call the customized validation logic
 	 *
@@ -376,17 +376,17 @@ public abstract class AbstractValidationBean {
 	public void setProjectValidator(AbstractProjectValidator projectValidator) {
 		this.projectValidator = projectValidator;
 	}
-	
+
 	/**
 	 * Call project validator to verify customized validation logic
-	 * @param customized validation method 
+	 * @param customized validation method
 	 * @return true/false based on verification result
 	 */
 	protected boolean verify(String methodName) {
 		// Check the instance of project specific validator
 		LOGGER.info("The instance of project validator -> " + projectValidator);
 		Preconditions.checkNotNull(projectValidator, "Before doing the customized validation -" + methodName + "-, "
-				+ "please instantiate the project specific validator and set it into this bean --" 
+				+ "please instantiate the project specific validator and set it into this bean --"
 				+ this.getClass().getSimpleName() + "--");
 		// call the customized validation method
 		try {

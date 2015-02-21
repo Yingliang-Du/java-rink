@@ -2,11 +2,15 @@ package com.ylw.enterprise.validation.example;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Field;
+
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
 public class MySubBeanTest {
 	private static final Logger LOGGER = Logger.getLogger(MySubBeanTest.class);
+
+	protected Class<?> clazz = MySubBean.class;
 
 	@Test
 	public void testBuildMySubBean() {
@@ -39,5 +43,26 @@ public class MySubBeanTest {
 		LOGGER.info("Sub class instance -> " + rectangle);
 		assertNotNull("The opacity field in sub class should be populated", rectangle.getOpacity());
 		assertNotNull("The height field in sub class should be populated", rectangle.getHeight());
+	}
+
+	@Test
+	public void testReflection() {
+		// Print out classes
+		for (Class c : clazz.getClasses()) {
+			LOGGER.info("class name -> " + c.getName() + " simple name -> " + c.getSimpleName());
+		}
+		// Print out declared classes
+		for (Class c : clazz.getDeclaredClasses()) {
+			LOGGER.info("declared class name -> " + c.getName() + " simple name -> " + c.getSimpleName());
+		}
+
+		// Print out fields in class
+		for (Field f : clazz.getFields()) {
+			LOGGER.info("field name -> " + f.getName());
+		}
+		// Print out fields in class
+		for (Field f : clazz.getDeclaredFields()) {
+			LOGGER.info("declared field name -> " + f.getName());
+		}
 	}
 }
