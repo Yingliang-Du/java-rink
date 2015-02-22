@@ -267,6 +267,17 @@ public class MyBeanTest {
 			}
 		}
 	}
+	
+	@Test
+	public void testInstantiateInnerClass() {
+		myBean = MyBean.Builder.formKeyValues("abcdefg").build();
+		
+		LOGGER.info("FormKey InnerClass name -> " + myBean.formKeyClass.getName());
+		LOGGER.info("FormKey InnerClass simple name -> " + myBean.formKeyClass.getSimpleName());
+		assertEquals("Make sure the FormKey class", myBean.formKeyClass.getSimpleName(), "FormKey");
+		LOGGER.info("FormKey InnerClass instance -> " + myBean.formKeyInstance);
+		assertTrue("Make sure the FormKey class instance", myBean.formKeyInstance instanceof MyBean.FormKey);
+	}
 
 	@Test
 	public void testTreeMap() {

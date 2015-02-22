@@ -18,6 +18,7 @@
 package com.ylw.enterprise.validation.bean;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -52,15 +53,29 @@ public abstract class AbstractValidationBean implements Comparable {
 	 * Default constructor
 	 */
 	public AbstractValidationBean() {
+		// Set default value to beanName - which bean will be sorted by default
+		this.beanName = this.getClass().getSimpleName();
 	}
 	
 	/**
-	 * Construct bean for web form
+	 * Construct bean for web form - 
+	 * 	will build form key map to be used in web form and data binding
 	 */
 	public AbstractValidationBean(String beanName) {
 		// Specify form bean name and build form key map
-		this.setBeanName(beanName);
+		this.beanName = beanName;
 		this.buildFormKeyMap();
+		this.formKeyClass = findFormKeyClass();
+		this.formKeyInstance = null;
+		try {
+			Constructor<?> ctor = formKeyClass.getDeclaredConstructor(this.getClass());
+			this.formKeyInstance = ctor.newInstance(this);
+		}
+		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+			// Error happened when instantiate FormKey inner class
+			LOGGER.warn("Error happened when instantiate FormKey inner class, " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	// --------------Field text format----------------
@@ -77,7 +92,9 @@ public abstract class AbstractValidationBean implements Comparable {
 	// --------------------Binding----------------------
 	private final Map<String, String> formKeyMap = Maps.newTreeMap();
 	@Property
-	private String beanName;
+	private final String beanName;
+	public Class<?> formKeyClass;
+	public Object formKeyInstance;
 
 	public Map<String, String> getFormKeyMap() {
 		return formKeyMap;
@@ -87,19 +104,11 @@ public abstract class AbstractValidationBean implements Comparable {
 		return beanName;
 	}
 
-	protected void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
-
 	/**
 	 * The default form key map beanName.fieldName
 	 * beanName can be set or use class name if not
 	 */
 	private void buildDefaultFormKeyMap() {
-		// beanName - use class name if not set
-		if (beanName == null) {
-			beanName = this.getClass().getSimpleName();
-		}
 		// Get all fields of this bean
 		Field[] fields = this.getClass().getDeclaredFields();
 		// Build default form key map for each field in this bean
@@ -119,7 +128,6 @@ public abstract class AbstractValidationBean implements Comparable {
 		// Build default form key map
 		buildDefaultFormKeyMap();
 		// Customize base on form keys defined in FormKey class
-		Class<?> formKeyClass = getFormKeyClass();
 		if (formKeyClass != null) {
 			// If form key class defined
 			Field[] fields = formKeyClass.getDeclaredFields();
@@ -127,6 +135,7 @@ public abstract class AbstractValidationBean implements Comparable {
 			String key = null;
 			for (int i = 0; i < fields.length; i++) {
 				Field field = fields[i];
+				field.setAccessible(true);
 				try {
 					key = (String) field.get(this);
 				}
@@ -163,9 +172,9 @@ public abstract class AbstractValidationBean implements Comparable {
 	}
 
 	/**
-	 * Get FormKey class if it is defined in the sub class
+	 * Find FormKey class if it is defined in the sub class
 	 */
-	public Class<?> getFormKeyClass() {
+	private Class<?> findFormKeyClass() {
 		// Get class of this bean
 		Class<?> thisClass = this.getClass();
 		// Loop through all declared class and get the FormKey class defined
@@ -474,6 +483,15 @@ public abstract class AbstractValidationBean implements Comparable {
 	public int hashCode() {
 		return Pojomatic.hashCode(this);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+//	@Override
+//	public int compareTo(T o) {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
 
 	// -------------Default comparable method--------------
 	/**

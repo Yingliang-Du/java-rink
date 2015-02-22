@@ -209,7 +209,7 @@ public abstract class AbstractBeanBinder {
 		StringBuffer buff;
 		String propertyName;
 		// Deal with customized (need to be defined in FormKey nested class) key
-		Class<?> formKeyClass = bean.getFormKeyClass();
+		Class<?> formKeyClass = bean.formKeyClass;
 		Field[] fields = null;
 		if (formKeyClass == null) {
 			// There is no FormKey class defined in the bean
@@ -236,7 +236,7 @@ public abstract class AbstractBeanBinder {
 					for (int i=0; i<fields.length; i++) {
 						Field field = fields[i];
 						try {
-							if (field.get(bean).equals(key)) {
+							if (field.get(bean.formKeyInstance).equals(key)) {
 								// Add matched key to parameter map
 								parameterMap2.put(field.getName(), parameterMap.get(key));
 							}

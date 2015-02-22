@@ -2,11 +2,10 @@ package com.ylw.enterprise.validation.example;
 
 import org.pojomatic.annotations.AutoProperty;
 
-import com.ylw.enterprise.validation.bean.AbstractPojomaticBean;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
 
 @AutoProperty
-public class Shape extends AbstractPojomaticBean {
+public class Shape extends AbstractValidationBean {
 	private final double opacity;
 
 	public double getOpacity() {

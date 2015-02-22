@@ -21,19 +21,17 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.pojomatic.Pojomatic;
 import org.pojomatic.annotations.AutoProperty;
+import org.pojomatic.annotations.Property;
 
 import com.google.common.collect.ImmutableSet;
-import com.ylw.enterprise.validation.bean.AbstractPojomaticBean;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
-import com.ylw.enterprise.validation.error.FieldError;
-import com.ylw.enterprise.validation.example.MySubBean.Builder2;
 
 @AutoProperty
-public class MyBean extends AbstractPojomaticBean {
+public class MyBean extends AbstractValidationBean {
 	private static final Logger LOGGER = Logger.getLogger(MyBean.class);
 
 	/**
@@ -337,11 +335,18 @@ public class MyBean extends AbstractPojomaticBean {
 	 * Only fields declared in this inner class will be binded
 	 *
 	 */
+	@AutoProperty
 	public class FormKey {
-		public static final String builder = "form_key_builder";
-		public static final String stringField = "customized_form_key_stringField";
-		public static final String zipCode = "customized_form_key_for_zipCode";
-		public static final String providedZipCode = "customized_form_key_for_providedZipCode";
+		public final String builder = "form_key_builder";
+		public final String stringField = "customized_form_key_stringField";
+		public final String zipCode = "customized_form_key_for_zipCode";
+		public final String providedZipCode = "customized_form_key_for_providedZipCode";
+		
+		// ----------Override toString------------
+		@Override
+		public String toString() {
+			return Pojomatic.toString(this);
+		}
 	}
 
 	/* ------------------Validation-------------------- */

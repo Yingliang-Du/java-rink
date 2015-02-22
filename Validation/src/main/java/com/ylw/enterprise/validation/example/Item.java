@@ -19,14 +19,13 @@ package com.ylw.enterprise.validation.example;
 
 import org.pojomatic.annotations.AutoProperty;
 
-import com.ylw.enterprise.validation.bean.AbstractPojomaticBean;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
 
 /**
  *
  */
 @AutoProperty
-public class Item extends AbstractPojomaticBean {
+public class Item extends AbstractValidationBean {
 	private String stringField;
 	private int intField;
 	

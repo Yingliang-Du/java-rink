@@ -22,14 +22,13 @@ import java.math.BigInteger;
 
 import org.pojomatic.annotations.AutoProperty;
 
-import com.ylw.enterprise.validation.bean.AbstractPojomaticBean;
 import com.ylw.enterprise.validation.bean.AbstractValidationBean;
 
 /**
  *
  */
 @AutoProperty
-public class NumberBean extends AbstractPojomaticBean {
+public class NumberBean extends AbstractValidationBean {
 	private Byte byteField;
 	private Short shortField;
 	private Integer integerField;
