@@ -33,6 +33,21 @@ import org.pojomatic.Pojomatic;
 public abstract class AbstractPojomaticBean extends AbstractValidationBean {
 	private static final Logger LOGGER = Logger.getLogger(AbstractPojomaticBean.class);
 	
+	/* ----------Constructors---------- */
+	/**
+	 * Default constructor
+	 */
+	public AbstractPojomaticBean() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	/**
+	 * Construct bean for web form
+	 */
+	public AbstractPojomaticBean(String beanName) {
+		super(beanName);
+	}
+	
 	// ---------------Convert to JSON----------------
 	public String toJson() {
 		// Place holder for converted JSON string

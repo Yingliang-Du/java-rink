@@ -1,6 +1,11 @@
 package com.ylw.enterprise.validation.example;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Sets;
 
 public class MyContext {
 	private static final Logger LOGGER = Logger.getLogger(MyContext.class);
@@ -9,6 +14,13 @@ public class MyContext {
 	private String json;
 	private String showJson = "none";
 	private String success = "none";
+	
+	//A prototype for multiple items in the form
+	private TreeSet<Item> items = Sets.newTreeSet();
+
+	public Set<Item> getItems() {
+		return items;
+	}
 
 	public MyBean getMyBean() {
 		return myBean;

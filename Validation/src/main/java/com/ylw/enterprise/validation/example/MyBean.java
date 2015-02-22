@@ -47,8 +47,7 @@ public class MyBean extends AbstractPojomaticBean {
 	 */
 	public MyBean(String beanName) {
 		// Specify form bean name and build form key map
-		this.setBeanName(beanName);
-		this.buildFormKeyMap();
+		super(beanName);
 	}
 
 	/* ------------------Properties------------------ */
@@ -266,8 +265,7 @@ public class MyBean extends AbstractPojomaticBean {
 		 * Clone the bean without formKey map and add the formKey map to it
 		 *
 		 * @param beanName
-		 * @param address
-		 *            - bean without formKey
+		 * @param address - bean without formKey
 		 * @return Builder with formKey build in the bean
 		 */
 		public static Builder formKeyValues(String beanName, MyBean bean) {
@@ -278,7 +276,8 @@ public class MyBean extends AbstractPojomaticBean {
 					.withIntegerField(bean.getIntegerField())
 					.withIntField(bean.getIntField())
 					.withStringRange(bean.getStringRange())
-					.withUrl(bean.getUrl());
+					.withUrl(bean.getUrl())
+					.withZipCode(bean.getZipCode());
 		}
 
 		/**
@@ -312,6 +311,11 @@ public class MyBean extends AbstractPojomaticBean {
 
 		public Builder withCreditCard(String creditCardNumber) {
 			myBean.setCreditCardNumber(creditCardNumber);
+			return this;
+		}
+		
+		public Builder withZipCode(String zipCode) {
+			myBean.setZipCode(zipCode);
 			return this;
 		}
 

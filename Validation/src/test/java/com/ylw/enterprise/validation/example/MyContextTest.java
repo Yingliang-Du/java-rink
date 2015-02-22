@@ -24,5 +24,19 @@ public class MyContextTest {
 		assertNotNull("The bean's json string should not be null", jsonString);
 		assertNotNull("The JSON String should not be null", jsonString);
 	}
+	
+	@Test
+	public void testMultiItems() {
+		MyBean item;
+		String key;
+		for (int i=0; i<3; i++) {
+			key = "MyBean" + i;
+			item = MyBean.Builder.formKeyValues(key)
+					.withIntField(i)
+					.withZipCode("12345-678" + i)
+					.build();
+			LOGGER.info("item -> " + item);
+		}
+	}
 
 }

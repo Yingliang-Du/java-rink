@@ -17,6 +17,7 @@
  */
 package com.ylw.enterprise.validation.bean;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,6 +27,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.pojomatic.Pojomatic;
+import org.pojomatic.annotations.Property;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -40,8 +44,24 @@ import com.ylw.enterprise.validation.validator.AbstractProjectValidator;
 import com.ylw.enterprise.validation.validator.FieldValidator;
 import com.ylw.enterprise.validation.validator.ValidationRule;
 
-public abstract class AbstractValidationBean {
+public abstract class AbstractValidationBean implements Comparable {
 	private static final Logger LOGGER = Logger.getLogger(AbstractValidationBean.class);
+	
+	/* ----------Constructors---------- */
+	/**
+	 * Default constructor
+	 */
+	public AbstractValidationBean() {
+	}
+	
+	/**
+	 * Construct bean for web form
+	 */
+	public AbstractValidationBean(String beanName) {
+		// Specify form bean name and build form key map
+		this.setBeanName(beanName);
+		this.buildFormKeyMap();
+	}
 
 	// --------------Field text format----------------
 	protected String dateFormat = "MM/dd/yyyy";
@@ -56,6 +76,7 @@ public abstract class AbstractValidationBean {
 
 	// --------------------Binding----------------------
 	private final Map<String, String> formKeyMap = Maps.newTreeMap();
+	@Property
 	private String beanName;
 
 	public Map<String, String> getFormKeyMap() {
@@ -415,5 +436,53 @@ public abstract class AbstractValidationBean {
 		// return false by default
 		return false;
 	}
+	
+	// ---------------Convert to JSON----------------
+	public String toJson() {
+		// Place holder for converted JSON string
+		String jsonString = null;
+		// Instantiate Jackson object mapper
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			// Unformatted JSON string
+//			jsonString = mapper.writeValueAsString(this);
+			// Formatted JSON string
+			jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+		}
+		catch (IOException e) {
+			// Got exception during conversion
+			LOGGER.error("Exception happened when convert " + this.getClass().getSimpleName() + " to JSON");
+			e.printStackTrace();
+		}
+		LOGGER.info(this.getClass().getSimpleName() + ": " + jsonString);
+		// Return the JSON string
+		return jsonString;
+	}
+	
+	// ---------------Override equals, toString and hashCode--------------
+	@Override
+	public boolean equals(Object other) {
+		return Pojomatic.equals(this, other);
+	}
 
+	@Override
+	public String toString() {
+		return Pojomatic.toString(this);
+	}
+
+	@Override
+	public int hashCode() {
+		return Pojomatic.hashCode(this);
+	}
+
+	// -------------Default comparable method--------------
+	/**
+	 * Compare to beanName by default - for sort multiple items by beanName
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(Object o) {
+		// Default by compare beanName
+		return this.beanName.compareTo(((AbstractValidationBean) o).beanName);
+	}
 }
