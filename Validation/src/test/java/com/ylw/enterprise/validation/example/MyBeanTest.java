@@ -211,7 +211,8 @@ public class MyBeanTest {
 
 	@Test
 	public void testBuildFormKey() {
-		myBean.buildFormKeyMap();
+		// buildFormKeyMap() should be called in constructor
+		myBean = MyBean.Builder.formKeyValues("MyBean").build();		
 	}
 
 	@Test

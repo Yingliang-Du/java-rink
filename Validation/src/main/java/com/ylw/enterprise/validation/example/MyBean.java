@@ -337,12 +337,12 @@ public class MyBean extends AbstractValidationBean {
 	 */
 	@AutoProperty
 	public class FormKey {
-		public final String builder = "form_key_builder";
+		public static final String builder = "form_key_builder";
 		public final String stringField = "customized_form_key_stringField";
 		public final String zipCode = "customized_form_key_for_zipCode";
-		public final String providedZipCode = "customized_form_key_for_providedZipCode";
+		public static final String providedZipCode = "customized_form_key_for_providedZipCode";
 		
-		// ----------Override toString------------
+		// ------------Override toString------------
 		@Override
 		public String toString() {
 			return Pojomatic.toString(this);

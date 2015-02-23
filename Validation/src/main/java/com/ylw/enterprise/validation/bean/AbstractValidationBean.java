@@ -45,7 +45,7 @@ import com.ylw.enterprise.validation.validator.AbstractProjectValidator;
 import com.ylw.enterprise.validation.validator.FieldValidator;
 import com.ylw.enterprise.validation.validator.ValidationRule;
 
-public abstract class AbstractValidationBean implements Comparable {
+public abstract class AbstractValidationBean implements Comparable<AbstractValidationBean> {
 	private static final Logger LOGGER = Logger.getLogger(AbstractValidationBean.class);
 	
 	/* ----------Constructors---------- */
@@ -64,18 +64,26 @@ public abstract class AbstractValidationBean implements Comparable {
 	public AbstractValidationBean(String beanName) {
 		// Specify form bean name and build form key map
 		this.beanName = beanName;
-		this.buildFormKeyMap();
+		// Find FormKey class 
 		this.formKeyClass = findFormKeyClass();
+		// Instantiate FormKey class if defined
 		this.formKeyInstance = null;
-		try {
-			Constructor<?> ctor = formKeyClass.getDeclaredConstructor(this.getClass());
-			this.formKeyInstance = ctor.newInstance(this);
+		if (formKeyClass != null) {
+			try {
+				Constructor<?> ctor = formKeyClass.getDeclaredConstructor(this.getClass());
+				this.formKeyInstance = ctor.newInstance(this);
+			}
+			catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+				// Error happened when instantiate FormKey inner class
+				LOGGER.warn("Error happened when instantiate FormKey inner class, " + e.getMessage());
+				e.printStackTrace();
+			}
 		}
-		catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
-			// Error happened when instantiate FormKey inner class
-			LOGGER.warn("Error happened when instantiate FormKey inner class, " + e.getMessage());
-			e.printStackTrace();
+		else {
+			LOGGER.warn("There is not FormKey inner class defined");
 		}
+		// Build form key map
+		this.buildFormKeyMap();
 	}
 
 	// --------------Field text format----------------
@@ -124,10 +132,11 @@ public abstract class AbstractValidationBean implements Comparable {
 	/**
 	 * Build Form Key Map
 	 */
-	public void buildFormKeyMap() {
+	private void buildFormKeyMap() {
 		// Build default form key map
 		buildDefaultFormKeyMap();
 		// Customize base on form keys defined in FormKey class
+		LOGGER.info("FormKey inner class defined -> " + this.formKeyClass + " in class -> " + this.getClass().getName());
 		if (formKeyClass != null) {
 			// If form key class defined
 			Field[] fields = formKeyClass.getDeclaredFields();
@@ -135,11 +144,13 @@ public abstract class AbstractValidationBean implements Comparable {
 			String key = null;
 			for (int i = 0; i < fields.length; i++) {
 				Field field = fields[i];
-				field.setAccessible(true);
 				try {
-					key = (String) field.get(this);
+					// Get the value of the key defined in FormKey inner class
+					LOGGER.info("field -> " + field.getName());
+					key = (String) field.get(this.formKeyInstance);
+					LOGGER.info("key -> " + key);
 				}
-				catch (IllegalArgumentException | IllegalAccessException | ClassCastException e) {
+				catch (IllegalAccessException e) {
 					// Error happened when retrieve key from FormKey
 					LOGGER.info("Error happened when retrieve key from FormKey");
 					e.printStackTrace();
@@ -484,23 +495,14 @@ public abstract class AbstractValidationBean implements Comparable {
 		return Pojomatic.hashCode(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-//	@Override
-//	public int compareTo(T o) {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
-
 	// -------------Default comparable method--------------
 	/**
 	 * Compare to beanName by default - for sort multiple items by beanName
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(Object o) {
+	public int compareTo(AbstractValidationBean otherBean) {
 		// Default by compare beanName
-		return this.beanName.compareTo(((AbstractValidationBean) o).beanName);
+		return this.beanName.compareTo(otherBean.beanName);
 	}
 }
