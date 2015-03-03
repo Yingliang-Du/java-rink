@@ -22,6 +22,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,7 +48,7 @@ import com.ylw.enterprise.validation.validator.ValidationRule;
 
 public abstract class AbstractValidationBean implements Comparable<AbstractValidationBean> {
 	private static final Logger LOGGER = Logger.getLogger(AbstractValidationBean.class);
-	
+
 	/* ----------Constructors---------- */
 	/**
 	 * Default constructor
@@ -56,15 +57,14 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 		// Set default value to beanName - which bean will be sorted by default
 		this.beanName = this.getClass().getSimpleName();
 	}
-	
+
 	/**
-	 * Construct bean for web form - 
-	 * 	will build form key map to be used in web form and data binding
+	 * Construct bean for web form - will build form key map to be used in web form and data binding
 	 */
 	public AbstractValidationBean(String beanName) {
 		// Specify form bean name and build form key map
 		this.beanName = beanName;
-		// Find FormKey class 
+		// Find FormKey class
 		this.formKeyClass = findFormKeyClass();
 		// Instantiate FormKey class if defined
 		this.formKeyInstance = null;
@@ -73,7 +73,8 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 				Constructor<?> ctor = formKeyClass.getDeclaredConstructor(this.getClass());
 				this.formKeyInstance = ctor.newInstance(this);
 			}
-			catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+			catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
+					| IllegalArgumentException | InvocationTargetException e) {
 				// Error happened when instantiate FormKey inner class
 				LOGGER.warn("Error happened when instantiate FormKey inner class, " + e.getMessage());
 				e.printStackTrace();
@@ -113,8 +114,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	}
 
 	/**
-	 * The default form key map beanName.fieldName
-	 * beanName can be set or use class name if not
+	 * The default form key map beanName.fieldName beanName can be set or use class name if not
 	 */
 	private void buildDefaultFormKeyMap() {
 		// Get all fields of this bean
@@ -235,17 +235,59 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	}
 
 	// -------------------Validation---------------------
-	// A set of error messages
-	protected final Set<BeanError> errors = Sets.newHashSet();
+	/**
+	 * A set of error messages The default error type is BeanError or sub-type of BeanError; or any class that
+	 * implemented getMessage() method (this is for legacy code not extend BeanError class); Error String can also be
+	 * added to errors by convert it to BeanError.
+	 */
+	@SuppressWarnings("rawtypes")
+	protected final Set errors = new HashSet(); // Sets.newHashSet();
 	private final Map<String, Set<FieldError>> fieldErrorMap = Maps.newTreeMap();
 
-	/* Deal with errors */
-	public Set<BeanError> getErrors() {
+	/* Methods deal with errors */
+	@SuppressWarnings("rawtypes")
+	public Set getErrors() {
 		return errors;
 	}
 
-	public void addError(BeanError error) {
-		errors.add(error);
+	@SuppressWarnings("unchecked")
+	public void addError(Object error) {
+		if (error instanceof BeanError) {
+			// Add BeanError type
+			errors.add(error);
+		}
+		else if (error instanceof String) {
+			// Add String error type
+			// Create BeanError out of message
+			errors.add(new BeanError((String) error));
+		}
+		else if (getMessageMethod(error) != null) {
+			// Add Other error type
+			// Make sure the class implement getMessage() method
+			errors.add(error);
+		}
+		else {
+			// The class has to implement getMessage method to be added to errors
+			LOGGER.warn("The class -" + error.getClass().getSimpleName()
+							+ "- has to implement getMessage method to be added to errors");
+		}	
+	}
+
+	/**
+	 * Find out if the class implemented {@link getMessage()} method
+	 * @return true when the class implemented getMessage method, false otherwise
+	 */
+	private Method getMessageMethod(Object error) {
+		// See if the class implemented getMessage() method
+		try {
+			return error.getClass().getMethod("getMessage");
+		}
+		catch (NoSuchMethodException | SecurityException e) {
+			// The class has to implement getMessage method to be a error instance
+			LOGGER.warn("The class -" + error.getClass().getSimpleName()
+					+ "- has to implement getMessage method to be a error instance");
+			return null;
+		}
 	}
 
 	/**
@@ -253,9 +295,9 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	 *
 	 * @param message
 	 */
-//	public void addError(String message) {
-//		addError(new BeanError(message));
-//	}
+	// public void addError(String message) {
+	// addError(new BeanError(message));
+	// }
 
 	/* See if there are errors in this object */
 	public boolean hasError() {
@@ -264,22 +306,31 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 
 	/**
 	 * Validation will pass if there is no non-ignorable errors after validation
+	 * 
 	 * @return true if passed the validation, false otherwise
 	 */
 	public boolean pass() {
 		// if errors contains non-ignorable error - return false
 		if (!errors.isEmpty()) {
-			for(BeanError error : errors) {
-				if(!error.isIgnorable()) {
+			for (Object err : errors) {
+				try {
+					BeanError error = (BeanError) err;
+					if (!error.isIgnorable()) {
+						return false;
+					}
+				}
+				catch (ClassCastException ex) {
+					// Non BeanError type in errors
+					LOGGER.warn("There is non BeanError type error -" + err.getClass().getSimpleName() + "- in errors!");
 					return false;
 				}
 			}
 		}
 		// if field errors contains non-ignorable error - return false
 		if (!fieldErrorMap.isEmpty()) {
-			for(Set<FieldError> fieldErrors : fieldErrorMap.values()) {
-				for(BeanError error : fieldErrors) {
-					if(!error.isIgnorable()) {
+			for (Set<FieldError> fieldErrors : fieldErrorMap.values()) {
+				for (BeanError error : fieldErrors) {
+					if (!error.isIgnorable()) {
 						return false;
 					}
 				}
@@ -326,7 +377,8 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	 * @param fieldName
 	 * @param fieldValue
 	 * @param validationRule
-	 * @param errorMessage - customized error message
+	 * @param errorMessage
+	 *           - customized error message
 	 */
 	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, String errorMessage) {
 		validate(validationRule, fieldName, fieldValue, errorMessage);
@@ -338,7 +390,8 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	 * @param fieldName
 	 * @param fieldValue
 	 * @param validationRule
-	 * @param message - customized error code
+	 * @param message
+	 *           - customized error code
 	 */
 	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, ErrorMessage message) {
 		validate(validationRule, fieldName, fieldValue, message);
@@ -365,42 +418,62 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 		// Deal with violated rules and add field error to errors if any
 		boolean ignorable = validationRule.isIgnorable();
 		if (fieldErrorCode != null) {
-			// There is error - build error object
-			FieldError error = new FieldError(fieldName, fieldErrorCode, ignorable);
-			if (customError == null) {
+			// There is error - build error objects base on error code
+			// Default field error
+			FieldError fieldError = new FieldError(fieldName, fieldErrorCode, ignorable);
+			// Default bean error
+			Object beanError = new BeanError(fieldErrorCode.getMessage(), ignorable);
+			/*
+			 * Customize error message and error instance - When string message passed in, use that as error message When
+			 * instance with getMessage() implemented passed in, use that instance add to errors
+			 */
+			if (customError != null) {
+				Method getMessage = getMessageMethod(customError);
 				// build error object base on error code
-				error = new FieldError(fieldName, fieldErrorCode, ignorable);
-			}
-			else {
 				if (customError instanceof ErrorMessage) {
-					error = new FieldError(fieldName, ((ErrorMessage) customError).getMessage(), ignorable);
+					fieldError = new FieldError(fieldName, ((ErrorMessage) customError).getMessage(), ignorable);
+					beanError = customError;
 				}
-				else
-					if (customError instanceof String) {
-						error = new FieldError(fieldName, (String) customError, ignorable);
+				else if (customError instanceof String) {
+					fieldError = new FieldError(fieldName, (String) customError, ignorable);
+					beanError = new BeanError((String) customError, ignorable);
+				}
+				else if (getMessage != null) {
+					try {
+						String message = (String) getMessage.invoke(customError, null);
+						fieldError = new FieldError(fieldName, message, ignorable);
+						// Use the customError instance if it implemented getMessage()
+						beanError = customError;
 					}
-					else {
-						LOGGER.warn("Unricegnized customized message -> " + customError);
+					catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+						// Log error
+						LOGGER.warn("Error happened when invoke getMessage method of error instance: ");
+						e.printStackTrace();
 					}
+				}
+				else {
+					LOGGER.warn("Unricegnized customized message instance -> " + customError.getClass().getName());
+				}
 			}
 			// Add field error
-			addFieldError(fieldName, error);
+			addFieldError(fieldName, fieldError, beanError);
 		}
 	}
 
 	/*
-	 * Add field error to error set and field error map
+	 * Add field error to the field error map
+	 * Add bean error to the bean error set
 	 */
-	private void addFieldError(String fieldName, FieldError error) {
+	private void addFieldError(String fieldName, FieldError fieldError, Object beanError) {
 
-		// Add error to the object error set
-		errors.add(error);
-		// add to the field error map
+		// Add bean error to the bean error set
+		errors.add(beanError);
+		// Add field error to the field error map
 		Set<FieldError> fieldErrors = fieldErrorMap.get(fieldName);
 		if (fieldErrors == null) {
 			fieldErrors = Sets.newHashSet();
 		}
-		fieldErrors.add(error);
+		fieldErrors.add(fieldError);
 		fieldErrorMap.put(fieldName, fieldErrors);
 	}
 
@@ -412,7 +485,8 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	 * Create project specific Validator extends {@link AbstractProjectValidator} Set the validator here so the
 	 * validation framework can call the customized validation logic
 	 *
-	 * @param projectValidator - project specific validator
+	 * @param projectValidator
+	 *           - project specific validator
 	 */
 	public void setProjectValidator(AbstractProjectValidator projectValidator) {
 		this.projectValidator = projectValidator;
@@ -420,7 +494,9 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 
 	/**
 	 * Call project validator to verify customized validation logic
-	 * @param customized validation method
+	 * 
+	 * @param customized
+	 *           validation method
 	 * @return true/false based on verification result
 	 */
 	protected boolean verify(String methodName) {
@@ -456,7 +532,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 		// return false by default
 		return false;
 	}
-	
+
 	// ---------------Convert to JSON----------------
 	public String toJson() {
 		// Place holder for converted JSON string
@@ -465,7 +541,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			// Unformatted JSON string
-//			jsonString = mapper.writeValueAsString(this);
+			// jsonString = mapper.writeValueAsString(this);
 			// Formatted JSON string
 			jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
 		}
@@ -478,7 +554,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 		// Return the JSON string
 		return jsonString;
 	}
-	
+
 	// ---------------Override equals, toString and hashCode--------------
 	@Override
 	public boolean equals(Object other) {
@@ -498,6 +574,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	// -------------Default comparable method--------------
 	/**
 	 * Compare to beanName by default - for sort multiple items by beanName
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override

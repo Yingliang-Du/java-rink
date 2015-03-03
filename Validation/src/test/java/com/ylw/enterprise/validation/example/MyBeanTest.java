@@ -106,6 +106,16 @@ public class MyBeanTest {
 	}
 	
 	@Test
+	public void testAddError() {
+		myBean.addError(MyErrorCode.ZIP_NO_MATCH);
+		myBean.addError(new MyError("My Error Message"));
+		assertEquals(2, myBean.getErrors().size());
+		myBean.addError("My Error Message String");
+		LOGGER.debug("Error Message 2 -> " + myBean.getErrors());
+		assertEquals(3, myBean.getErrors().size());
+	}
+	
+	@Test
 	public void testTheSameMessage() {
 		myBean.setStringField(null);
 		myBean.clearErrors().validate();

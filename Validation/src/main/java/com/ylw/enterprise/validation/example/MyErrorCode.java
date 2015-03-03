@@ -26,7 +26,9 @@ import com.ylw.enterprise.validation.error.ErrorMessage;
 public enum MyErrorCode implements ErrorMessage {
 	BIRTH_DATE_TOO_LATE("BirthDateTooLate", "Birth Date can not be later than today!"),
 	EXPIRATION_DATE_TOO_EARLY("ExpirationDateTooEarly", "Expiration Date can not be earlier than today!"),
-	ZIP_NO_MATCH("ZipNoMatch", "You have input a zip code that not match the zip code provided, please check and make sure!");
+	ZIP_NO_MATCH("ZipNoMatch", "You have input a zip code that not match the zip code provided, please check and make sure!"),
+	INVALID_NUMBER("InvalidNumber", "The number is not valid"),
+	EMPTY_STRING("EmptyString", "The string should not be empty");
 	
 	private String id;
 	private String message;
@@ -39,7 +41,7 @@ public enum MyErrorCode implements ErrorMessage {
 		this.message = message;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see com.ylw.enterprise.validation.error.ErrorMessage#getMessage()
 	 */
 	@Override

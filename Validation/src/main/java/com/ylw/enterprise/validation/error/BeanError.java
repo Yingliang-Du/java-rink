@@ -41,10 +41,10 @@ public class BeanError {
 	/**
 	 * Default constructor for constructing error message
 	 */
-//	public BeanError(String message) {
-//		this.message = message;
-//		this.ignorable = false;
-//	}
+	public BeanError(String message) {
+		this.message = message;
+		this.ignorable = false;
+	}
 	
 	public BeanError(String message, boolean ignorable) {
 		this.message = message;

@@ -17,18 +17,35 @@
  */
 package com.ylw.enterprise.validation.example;
 
-import com.ylw.enterprise.validation.error.BeanError;
+import static org.junit.Assert.*;
+
+import org.apache.log4j.Logger;
+import org.junit.Test;
 
 /**
- *
+ * 
  */
-public class MyError extends BeanError {
+public class ItemTest {
+	private static final Logger LOGGER = Logger.getLogger(ItemTest.class);
 
 	/**
-	 * @param error message
+	 * Test add error instance
 	 */
-	public MyError(String message) {
-		super(message);
+	@Test
+	public void testValidation() {
+		Item item = Item.Builder.defaults()
+				.withIntField(-1)
+				.withStringField("  ")
+				.build();
+		
+		item.validate();
+		LOGGER.info("Validation Errors -> " + item.getErrors());
+		assertTrue("Got validation errors", item.hasError());
+		// Verify error instance
+		for (Object error : item.getErrors()) {
+			LOGGER.info("Error instance -> " + error.getClass().getSimpleName());
+			assertTrue("Error instance not right", error instanceof MyErrorCode);
+		}
 	}
 
 }

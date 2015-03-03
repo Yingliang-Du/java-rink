@@ -29,6 +29,10 @@ public class Item extends AbstractValidationBean {
 	private String stringField;
 	private int intField;
 	
+	public Item() {
+		super();
+	}
+	
 	/**
 	 * Construct bean for web form
 	 */
@@ -53,6 +57,14 @@ public class Item extends AbstractValidationBean {
 	/* ------------------Builder--------------------- */
 	public static class Builder {
 		private Item item;
+		
+		public Builder() {
+			this.item = new Item();
+		}
+		
+		public static Builder defaults() {
+			return new Builder();
+		}
 		
 		/**
 		 * Construct builder for form bean
@@ -96,8 +108,8 @@ public class Item extends AbstractValidationBean {
 	 */
 	@Override
 	public AbstractValidationBean validate() {
-		validate("stringField", stringField, onRule().required(true).nonBlank(true).build());
-		validate("intField", intField, onRule().required(true).positiveNumber(true).build());
+		validate("stringField", stringField, onRule().required(true).nonBlank(true).build(), MyErrorCode.EMPTY_STRING);
+		validate("intField", intField, onRule().required(true).positiveNumber(true).build(), MyErrorCode.INVALID_NUMBER);
 		// return this bean
 		return this;
 	}
