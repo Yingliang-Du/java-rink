@@ -17,36 +17,29 @@
  */
 package com.ylw.enterprise.validation.example;
 
-import static org.junit.Assert.*;
-
-import org.apache.log4j.Logger;
-import org.junit.Test;
-
 /**
- * 
+ *
  */
-public class ItemTest {
-	private static final Logger LOGGER = Logger.getLogger(ItemTest.class);
-
+public enum ItemErrorCode {
+	INVALID_NUMBER("InvalidNumber", "The number is not valid - lagecy code"),
+	EMPTY_STRING("EmptyString", "The string should not be empty - lagecy code");
+	
+	private String id;
+	private String message;
+	
 	/**
-	 * Test add error instance
+	 * Construct error object
 	 */
-	@Test
-	public void testValidation() {
-		Item item = Item.Builder.defaults()
-				.withIntField(-1)
-				.withStringField("  ")
-				.build();
-		
-		item.validate();
-		
-		LOGGER.info("Validation Errors -> " + item.getErrors());
-		assertTrue("Got validation errors", item.hasError());
-		// Verify error instance
-		for (Object error : item.getErrors()) {
-			LOGGER.info("Error instance -> " + error.getClass().getSimpleName());
-			assertTrue("Error instance not right", error instanceof ItemErrorCode);
-		}
+	private ItemErrorCode(String id, String message) {
+		this.id = id;
+		this.message = message;
+	}
+
+	/*
+	 * Get message
+	 */
+	public String getMessage() {
+		return message;
 	}
 
 }

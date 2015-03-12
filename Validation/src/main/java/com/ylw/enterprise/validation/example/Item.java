@@ -108,8 +108,8 @@ public class Item extends AbstractValidationBean {
 	 */
 	@Override
 	public AbstractValidationBean validate() {
-		validate("stringField", stringField, onRule().required(true).nonBlank(true).build(), MyErrorCode.EMPTY_STRING);
-		validate("intField", intField, onRule().required(true).positiveNumber(true).build(), MyErrorCode.INVALID_NUMBER);
+		validate("stringField", stringField, onRule().required(true).nonBlank(true).build(), ItemErrorCode.EMPTY_STRING);
+		validate("intField", intField, onRule().required(true).positiveNumber(true).build(), ItemErrorCode.INVALID_NUMBER);
 		// return this bean
 		return this;
 	}

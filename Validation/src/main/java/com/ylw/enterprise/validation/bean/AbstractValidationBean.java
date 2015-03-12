@@ -372,32 +372,6 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	public abstract AbstractValidationBean validate();
 
 	/**
-	 * Validate the field base on the validation rule with customized error message
-	 *
-	 * @param fieldName
-	 * @param fieldValue
-	 * @param validationRule
-	 * @param errorMessage
-	 *           - customized error message
-	 */
-	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, String errorMessage) {
-		validate(validationRule, fieldName, fieldValue, errorMessage);
-	}
-
-	/**
-	 * Validate the field base on the validation rule with customized error message code
-	 *
-	 * @param fieldName
-	 * @param fieldValue
-	 * @param validationRule
-	 * @param message
-	 *           - customized error code
-	 */
-	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, ErrorMessage message) {
-		validate(validationRule, fieldName, fieldValue, message);
-	}
-
-	/**
 	 * Validate the field base on the validation rule
 	 *
 	 * @param fieldName
@@ -405,13 +379,22 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	 * @param validationRule
 	 */
 	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule) {
-		validate(validationRule, fieldName, fieldValue, null);
+		validate(fieldName, fieldValue, validationRule, null);
 	}
 
 	/*
 	 * Validate field value base on validation rule Create error base on error code or customized error
 	 */
-	private void validate(ValidationRule validationRule, String fieldName, Object fieldValue, Object customError) {
+	/**
+	 * Validate the field base on the validation rule with customized error message, 
+	 * error code or other error instance
+	 *
+	 * @param fieldName
+	 * @param fieldValue
+	 * @param validationRule
+	 * @param customError - customized error message, error code or other error instance
+	 */
+	protected void validate(String fieldName, Object fieldValue, ValidationRule validationRule, Object customError) {
 		// Validate
 		FieldValidator validator = new FieldValidator(validationRule);
 		FieldErrorCode fieldErrorCode = validator.validate(fieldValue);
