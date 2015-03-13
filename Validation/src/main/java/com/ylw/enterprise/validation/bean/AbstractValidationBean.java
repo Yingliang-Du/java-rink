@@ -250,6 +250,26 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 		return errors;
 	}
 
+	/**
+	 * Retrieve only errors with provided type and add them to provided error set
+	 * @param tErrors provided error set
+	 * @return errors with provided type
+	 */
+	public <T> Set<T> getErrors(Set<T> tErrors) {
+		if (tErrors == null) {
+			tErrors = Sets.newHashSet();
+		}
+	    for (Object o : errors) {
+	    	try {
+	    		tErrors.add((T) o);
+	    	}
+	    	catch (ClassCastException ex) {
+	    		LOGGER.info("The object with type -" + o.getClass().getSimpleName() + "- is not the right type");
+	    	}
+	    }
+	    return tErrors;
+	}
+
 	@SuppressWarnings("unchecked")
 	public void addError(Object error) {
 		if (error instanceof BeanError) {
@@ -270,7 +290,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 			// The class has to implement getMessage method to be added to errors
 			LOGGER.warn("The class -" + error.getClass().getSimpleName()
 							+ "- has to implement getMessage method to be added to errors");
-		}	
+		}
 	}
 
 	/**
@@ -306,7 +326,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 
 	/**
 	 * Validation will pass if there is no non-ignorable errors after validation
-	 * 
+	 *
 	 * @return true if passed the validation, false otherwise
 	 */
 	public boolean pass() {
@@ -386,7 +406,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	 * Validate field value base on validation rule Create error base on error code or customized error
 	 */
 	/**
-	 * Validate the field base on the validation rule with customized error message, 
+	 * Validate the field base on the validation rule with customized error message,
 	 * error code or other error instance
 	 *
 	 * @param fieldName
@@ -477,7 +497,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 
 	/**
 	 * Call project validator to verify customized validation logic
-	 * 
+	 *
 	 * @param customized
 	 *           validation method
 	 * @return true/false based on verification result
@@ -557,7 +577,7 @@ public abstract class AbstractValidationBean implements Comparable<AbstractValid
 	// -------------Default comparable method--------------
 	/**
 	 * Compare to beanName by default - for sort multiple items by beanName
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
