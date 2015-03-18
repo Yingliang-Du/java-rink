@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -307,6 +308,16 @@ public class MyBeanTest {
 		System.out.println("Value before modification: " + treemap);
 		System.out.println("Value returned: " + treemap.put(3, "TP"));
 		System.out.println("Value after modification: " + treemap);
+	}
+	
+	@Test
+	public void testGenericSet() {
+		Set set = new HashSet<MyErrorCode>();
+		
+		// this can add different type
+		set.add(MyErrorCode.ZIP_NO_MATCH);
+		set.add(new MyError("My Error Message"));
+		LOGGER.debug("Error Message 2 -> " + set);
 	}
 
 	@Test
