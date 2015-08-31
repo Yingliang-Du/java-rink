@@ -51,7 +51,12 @@ public enum FieldErrorCode implements ErrorMessage {
 
 	NON_DATE("NonDate", "field is not a valid Date."),
 	
-	NON_CREDIT_CARD("NonCreditCard", "field is not a valid Credit Card Number.");
+	NON_CREDIT_CARD("NonCreditCard", "field is not a valid Credit Card Number."),
+	
+	//-----Specific bean field error messages-----
+	MyBean_stringField_null("MyBean.stringField.null", "stringField field must not be null."),
+	MyBean_startDate_beforeToday("MyBean.startDate.beforeToday", "startDate field must not earlier than today."),
+	MyBean_expirDate_beforeStartDate("MyBean.expirDate.beforeStartDate", "expirDate field must not earlier than startDate.");
 
 	private String id;
 	private String message;

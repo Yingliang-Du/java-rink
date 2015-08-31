@@ -54,6 +54,7 @@ public class MyBean extends AbstractValidationBean {
 	private int intField;
 	private int calculated;
 	private Integer integerField;
+	private Date startDate;
 	private Date expirDate;
 	private String creditCardNumber;
 	private String email;
@@ -103,6 +104,14 @@ public class MyBean extends AbstractValidationBean {
 
 	public void setIntegerField(Integer integerField) {
 		this.integerField = integerField;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 
 	public Date getExpirDate() {
