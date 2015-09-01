@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ylw.enterprise.validation.common;
+package com.ylw.validation.util;
 
 import java.util.regex.Pattern;
 

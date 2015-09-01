@@ -24,8 +24,8 @@ import javax.annotation.Nonnull;
 
 import org.apache.log4j.Logger;
 
-import com.ylw.enterprise.validation.common.CreditCardUtils;
 import com.ylw.enterprise.validation.error.FieldErrorCode;
+import com.ylw.validation.util.CreditCardUtils;
 
 public class FieldValidator {
 	private final static Logger LOGGER = Logger.getLogger(FieldValidator.class);

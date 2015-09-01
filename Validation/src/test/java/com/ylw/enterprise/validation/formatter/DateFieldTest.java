@@ -7,7 +7,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import com.ylw.enterprise.validation.common.DateUtils;
+import com.ylw.validation.util.DateUtils;
 
 public class DateFieldTest {
 	private static final Logger LOGGER = Logger.getLogger(DateFieldTest.class);

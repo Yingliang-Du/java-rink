@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ylw.enterprise.validation.common;
+package com.ylw.validation.util;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -39,5 +39,14 @@ public class DateUtils {
 		calendar.set(Calendar.YEAR, year);
 		return calendar.getTime();
 	}
-
+	
+	/**
+	 * Create Date instance for today without time 
+	 */
+	public static Date getDateWithoutTime() {
+		long millisInDay = 60 * 60 * 24 * 1000;
+		long currentTime = new Date().getTime();
+		long dateOnly = (long) (Math.floor(currentTime / millisInDay) * millisInDay);
+		return new Date(dateOnly);
+	}
 }
