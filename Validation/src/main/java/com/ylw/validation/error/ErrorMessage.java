@@ -5,12 +5,12 @@ import org.pojomatic.annotations.AutoProperty;
 import com.ylw.validation.common.PojomaticBean;
 
 @AutoProperty
-public class BeanErrorMessage extends PojomaticBean {
+public class ErrorMessage extends PojomaticBean {
 	
 	private final String code;
 	private final String message;
 	
-	public BeanErrorMessage(String code, String message) {
+	public ErrorMessage(String code, String message) {
 		// initiate code and message
 		this.code = code;
 		this.message = message;
