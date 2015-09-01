@@ -1,4 +1,4 @@
-package com.ylw.enterprise.validation.common;
+package com.ylw.validation.util;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+
+import com.ylw.validation.util.DateUtils;
 
 public class DateUtilsTest {
 	private static final Logger LOGGER = Logger.getLogger(DateUtilsTest.class);
@@ -27,5 +29,15 @@ public class DateUtilsTest {
 		LOGGER.info("Date instance for month:-1 and year:2010 -> " + date);
 		date = DateUtils.getDate(-1, -1);
 		LOGGER.info("Date instance for month:-1 and year:-1 -> " + date);
+	}
+	
+	@Test
+	public void getDateWithoutTime() {
+		LOGGER.info("The Date of today without time -> " + DateUtils.getDateWithoutTime());
+	}
+	
+	@Test
+	public void getDateForBeginningOfToday() {
+		LOGGER.info("The Date of midnight yesterday -> " + DateUtils.getDateForBeginningOfToday());
 	}
 }

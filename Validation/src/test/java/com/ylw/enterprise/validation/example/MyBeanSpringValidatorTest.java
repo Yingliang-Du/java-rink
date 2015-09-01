@@ -3,8 +3,8 @@ package com.ylw.enterprise.validation.example;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import com.ylw.enterprise.validation.common.DateUtils;
 import com.ylw.validation.error.BeanErrors;
+import com.ylw.validation.util.DateUtils;
 
 import static junit.framework.Assert.*;
 

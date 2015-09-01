@@ -24,7 +24,7 @@ import java.text.NumberFormat;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import com.ylw.enterprise.validation.common.NumberUtils;
+import com.ylw.validation.util.NumberUtils;
 
 /**
  *

@@ -1,9 +1,11 @@
-package com.ylw.enterprise.validation.common;
+package com.ylw.validation.util;
 
 import static org.junit.Assert.*;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+
+import com.ylw.validation.util.CreditCardUtils;
 
 public class CreditCardUtilsTest {
 	private static final Logger LOGGER = Logger.getLogger(CreditCardUtilsTest.class);
