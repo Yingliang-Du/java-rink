@@ -35,4 +35,9 @@ public class DateUtilsTest {
 	public void getDateWithoutTime() {
 		LOGGER.info("The Date of today without time -> " + DateUtils.getDateWithoutTime());
 	}
+	
+	@Test
+	public void getDateForBeginningOfToday() {
+		LOGGER.info("The Date of midnight yesterday -> " + DateUtils.getDateForBeginningOfToday());
+	}
 }

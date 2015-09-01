@@ -19,6 +19,7 @@ package com.ylw.validation.util;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.apache.log4j.Logger;
 
@@ -46,7 +47,20 @@ public class DateUtils {
 	public static Date getDateWithoutTime() {
 		long millisInDay = 60 * 60 * 24 * 1000;
 		long currentTime = new Date().getTime();
-		long dateOnly = (long) (Math.floor(currentTime / millisInDay) * millisInDay);
+		long dateOnly = (currentTime / millisInDay) * millisInDay;
 		return new Date(dateOnly);
+	}
+	
+	/**
+	 * Create Date instance for the beginning of today
+	 */
+	public static Date getDateForBeginningOfToday() {
+		Calendar calStart = new GregorianCalendar();
+		calStart.setTime(new Date());
+		calStart.set(Calendar.HOUR_OF_DAY, 0);
+		calStart.set(Calendar.MINUTE, 0);
+		calStart.set(Calendar.SECOND, 0);
+		calStart.set(Calendar.MILLISECOND, 0);
+		return calStart.getTime();
 	}
 }
